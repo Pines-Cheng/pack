@@ -1,0 +1,203 @@
+//为修改安卓端配置文件添加事件，fancybox的配置及调用
+$(document).ready(function() {
+	//无边框！！！
+	$(".fancybox_config")
+		.attr('rel', 'gallery')
+		.fancybox({
+			padding: 0,
+			arrows: false,
+			nextClick: false,
+			closeClick: false,
+			mouseWheel: false,
+			helpers: {
+				overlay: {
+					closeClick: false
+				}
+			},
+
+			afterClose: function() {
+				setTimeout(function() {
+					getCompanyImages(encodeURI("/pack/getCompanyInfo"))
+				}, 1000);
+
+				return;
+			}
+		});
+
+
+});
+
+//打包的fancybox,退出时自动删除临时文件
+$(document).ready(function() {
+	//无边框！！！
+	$(".fancybox_pack")
+		.attr('rel', 'gallery')
+		.fancybox({
+			padding: 0,
+			arrows: false,
+			nextClick: false,
+			closeClick: false,
+			mouseWheel: false,
+			helpers: {
+				overlay: {
+					closeClick: false
+				}
+			},
+			afterClose: function() {
+				//alert("执行ajax删除！");
+				setTimeout(function() {
+					getCompanyImages(encodeURI("/pack/getCompanyInfo"));
+				}, 1000);
+
+				console.log($("body").attr("packResult"));
+
+				if ($("body").attr("packResult") == "SUCCESS") {
+					if (confirm("是否保存本次打包生成的安装包？") == false) {
+						var result = $("body").attr('androidProjectDestPath');
+						if (result != null || result != undefined) {
+							console.log("发送ajax!,删除临时文件！");
+							$.ajax({
+
+									url: "/pack/androidPackServlet?command=delete&deleteFilePath=" + result
+
+								})
+								.done(function(result) {
+									if (result.trim == "delete") {
+										console.log("delete temp pack files success!");
+									} else {
+										alert("删除临时文件失败！");
+									}
+								})
+								.fail(function() {
+									console.log("error");
+								})
+								.always(function() {
+									console.log("complete");
+								});
+						} else {
+							console.log("删除临时文件时，返回的result数据不存在！");
+						}
+					} else {
+						console.log("点击了确认，保存！");
+						var result = $("body").attr('androidProjectDestPath');
+						var downloadFileURL = $("body").attr('downloadFileURL');
+						
+						if (result != null || result != undefined) {
+							console.log("发送ajax!,删除临时文件！");
+							$.ajax({
+
+									url: "/pack/androidPackServlet?command=save&androidProjectDestPath=" + result+"&downloadFileURL="+downloadFileURL
+
+								})
+								.done(function() {
+									console.log("success");
+								})
+								.fail(function() {
+									console.log("error");
+								})
+								.always(function() {
+									console.log("complete");
+								});
+
+							//更新打包历史
+							changePackHistoryPlatform();
+
+						} else {
+							console.log("删除临时文件时，返回的result数据不存在！");
+						}
+					}
+				}
+
+				//将打包结果和打包返回信息清空
+				$("body").attr('androidProjectDestPath', "");
+				$("body").attr('packResult', "ERROR");
+			}
+
+
+		});
+});
+
+//图片预览的框架
+$(document).ready(function() {
+	$(".fancybox").fancybox({
+		openEffect: 'none',
+		closeEffect: 'none'
+	});
+});
+
+
+//每次点击公司名，都会出发公司名选择事件，为公司选择绑定多个事件
+$("#company_button>input").click(function(event) {
+	/* Act on the event */
+	//修改当前公司，并显示公司名
+	check_company_select();
+
+	//alert("haha");
+	//改变按钮样式
+});
+
+//修改安卓配置文件的事件
+$("#android_config_button").click(function(event) {
+	//alert("进入");
+
+	//自动显示服务器上保存的图片名
+	getCompanyImages(encodeURI("/pack/getCompanyInfo"));
+
+
+});
+
+//删除一个公司名
+$("#delete_button").click(function(event) {
+	var url = "/pack/companyNameOperateServlet?command=delete&selectedCompanyName=" + $("body").attr("selectCompanyName");
+	companyDelete(url);
+	window.location.reload();
+});
+
+
+
+//历史版本下载
+$("#home_pack_download").click(function(event) {
+	var select_platform = $("#home_select_platform option:selected").text();
+	var select_file = $("#home_select_history option:selected").text();
+	//如果显示存在历史打包文件
+	if (select_file != "历史打包文件不存在!") {
+
+		var url = "/pack/historyServlet?command=download&downloadFileName=" + select_file + "&platform=" + select_platform
+		window.open(url);
+
+	}
+});
+//历史版本删除
+$("#home_pack_delete").click(function(event) {
+	var select_platform = $("#home_select_platform option:selected").text();
+	var select_file = $("#home_select_history option:selected").text();
+	//如果显示存在历史打包文件
+	if (select_file != "历史打包文件不存在!") {
+		$.ajax({
+				url: "/pack/historyServlet?command=delete&deleteFileName=" + select_file + "&platform=" + select_platform
+
+			})
+			.done(function() {
+				console.log("home_pack_delete success");
+				changePackHistoryPlatform();
+			})
+			.fail(function() {
+				console.log("error");
+			})
+			.always(function() {
+				console.log("complete");
+			});
+	}
+});
+
+//启动validation Engine验证
+$(document).ready(function() {
+	// binds form submission and fields to the validation engine
+	$('#companyEditInput').validationEngine('attach');
+
+	$('#companyEditInput').validationEngine({
+		addPromptClass: 'formError-noArrow formError-small'
+		
+	});
+
+});

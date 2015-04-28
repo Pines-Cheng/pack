@@ -1,0 +1,147 @@
+
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+
+	<title>新格投资首届外汇英才挑战赛</title>
+
+	<style type="text/css">
+	.my_title {
+	font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span12">
+				<div class="row-fluid">
+					<div class="span12"></div>
+				</div>
+				<h3 class="text-center">新格投资首届外汇英才挑战赛</h3>
+				<br/>
+				<div class="row-fluid">
+					<div class="span12" align="center">
+
+						<a href="#">
+							<button class="btn btn-block btn-large btn-info" type="button">我要报名</button>
+						</a>
+					</div>
+
+					
+				</div>
+				<br/>
+
+				<div class="row-fluid">
+					
+
+					<div class="span12" align="center">
+						<a href="#">
+							<button  class="btn btn-block btn-info btn-large" type="button">操作教学</button>
+						</a>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<br/>
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="accordion" id="accordion-635465">
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<div style="font-weight:bold;font-size:1.4em" class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-635465" href="#accordion-element-183955" >说  明：</div>
+					</div>
+					<div id="accordion-element-183955" class="accordion-body collapse in">
+						<div class="accordion-inner">
+							<span style="font-size:1.4em">平台为比赛设置专门的参赛账户，赠金直接发在该交易账户中，现金奖发于绑定账户额银行卡。</span>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<div style="font-weight:bold;font-size:1.4em"  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-635465" href="#accordion-element-562291">奖 金：</div>
+					</div>
+					<div id="accordion-element-562291" class="accordion-body collapse in">
+						<div class="accordion-inner">
+							<ul style="font-size:1.4em">
+								<li>第一名：20000人民币+10000美金赠金(交易达到一定数量可取)</li>
+								<li>第二名：10000人民币+5000美金赠金(交易达到一定数量可取)</li>
+								<li>第三名：5000人民币+2500美金赠金(交易达到一定数量可取)</li>
+								<li>优胜奖：100人民币+25美金赠金(交易达到一定数量可取)</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<div style="font-weight:bold ;font-size:1.4em"  class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-635465" href="#accordion-element-183955">比赛时间：</div>
+					</div>
+					<div id="accordion-element-183955" class="accordion-body collapse in">
+						<div style="font-size:1.4em" class="accordion-inner">
+							<span >2015年3月23日</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<div style="font-weight:bold;font-size:1.4em"  class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-635465" href="#accordion-element-183955">主办单位:</div>
+					</div>
+					<div id="accordion-element-183955" class="accordion-body collapse in">
+						<div class="accordion-inner" style="font-size:1.4em">
+							<a >新格投资"牛人汇"团队</a>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<div style="font-weight:bold;font-size:1.4em"  class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-635465" href="#accordion-element-183955">协办单位:</div>
+					</div>
+					<div id="accordion-element-183955" class="accordion-body collapse in">
+						<div class="accordion-inner" style="font-size:1.4em">
+							<a>清华大学</a>
+							<a>厦门大学</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<div style="font-weight:bold;font-size:1.4em"  class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-635465" href="#accordion-element-183955">平台支持:</div>
+					</div>
+					<div id="accordion-element-183955" class="accordion-body collapse in">
+						<div class="accordion-inner" style="font-size:1.4em">
+							<a>汇盈资本</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<div style="font-weight:bold;font-size:1.4em"  class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-635465" href="#accordion-element-183955">客服电话:</div>
+					</div>
+					<div id="accordion-element-183955" class="accordion-body collapse in">
+						<div class="accordion-inner">
+							<div>13712345678</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+</body>
+
+</html>

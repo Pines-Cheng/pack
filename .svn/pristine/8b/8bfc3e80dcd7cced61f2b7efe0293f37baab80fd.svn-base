@@ -1,0 +1,190 @@
+package com.servlet;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.util.FileOperate;
+import com.util.MyLog;
+
+public class historyServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		request.setCharacterEncoding("UTF-8");
+
+		response.setContentType("text/html;charset=utf-8");
+
+		String command = request.getParameter("command");
+		String platform = request.getParameter("platform");
+
+		if (platform != null) {
+			// 获取历史版本信息
+			if (command == null) {
+
+				PrintWriter out = response.getWriter();
+
+				JSONObject js = new JSONObject();
+				js.put(platform,
+						getAndroidPackHistoryFiles(request,
+								getCompanyInfo.selectedCompanyName, platform));
+
+				String jsonString = JSON.toJSONString(js);
+				jsonString = "callback(" + jsonString + ");";
+				MyLog.logger.info(jsonString);
+				out.println(jsonString);
+
+				out.flush();
+				out.close();
+
+			}
+
+			// 下载
+			else if (command.equals("download")) {
+
+				String tomcatHistoryCompanyDir = new String(
+						request.getRealPath("/") + File.separator + "history"
+								+ File.separator + platform + File.separator
+								+ getCompanyInfo.selectedCompanyName);
+
+				String url = new String("downloadServlet?filePath="
+						+ tomcatHistoryCompanyDir + File.separator
+						+ request.getParameter("downloadFileName"));
+
+				MyLog.logger.info("下载URL：" + url);
+				// 转发到下载的servlet
+				request.getRequestDispatcher(url).forward(request, response);
+			}
+
+			// 删除
+			else if (command.equals("delete")) {
+
+				PrintWriter out = response.getWriter();
+
+				if (platform.equals("android")) {
+					deletePackHistory(request, response, out, command, platform);
+				}
+				if (platform.equals("IOS")) {
+					IOSHistoryManage(request, response, out, command, platform);
+				}
+				if (platform.equals("PC")) {
+					PCHistoryManage(request, response, out, command, platform);
+				}
+
+				out.flush();
+				out.close();
+			}
+		}
+
+	}
+
+	/**
+	 * @param request
+	 * @param response
+	 * @param out
+	 * @param command
+	 * @param platform
+	 * @throws IOException
+	 * @throws ServletException
+	 */
+	private void deletePackHistory(HttpServletRequest request,
+			HttpServletResponse response, PrintWriter out, String command,
+			String platform) throws IOException, ServletException {
+
+		try {
+
+			String deleteFileName = request.getParameter("deleteFileName");
+			String deleteFilePath = new String(getCompanyName.packSaveDir
+					+ File.separator + platform + File.separator
+					+ getCompanyInfo.selectedCompanyName + File.separator
+					+ deleteFileName);
+
+			FileOperate.deleteFiles(deleteFilePath);
+			out.println("success");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			out.println("error");
+		}
+
+	}
+
+	/**
+	 * @param out
+	 * @param SelectedCompanyName
+	 * @param tomcatHistoryCompanyDir
+	 * @throws IOException
+	 */
+	private String[] getAndroidPackHistoryFiles(HttpServletRequest request,
+			String SelectedCompanyName, String platform) throws IOException {
+		// 本地的文件存在，就先删除,不存在，就创建
+
+		String tomcatHistoryCompanyDir = new String(request.getRealPath("/")
+				+ File.separator + "history" + File.separator + platform
+				+ File.separator + getCompanyInfo.selectedCompanyName);
+
+		initFile(tomcatHistoryCompanyDir);
+
+		// 库里的文件存在，就复制过来
+		String packSaveCompanyDir = new String(getCompanyName.packSaveDir
+				+ File.separator + platform + File.separator
+				+ SelectedCompanyName);
+		File packSaveCompanyFile = new File(packSaveCompanyDir);
+
+		if (packSaveCompanyFile.exists()) {
+			FileOperate.copyDir(packSaveCompanyDir, tomcatHistoryCompanyDir);
+			File tomcatHistoryCompanyFile = new File(tomcatHistoryCompanyDir);
+			// 列出历史目录下文件名
+			String[] filesName = tomcatHistoryCompanyFile.list();
+			// 返回json
+			return filesName;
+
+		} else {
+			// 返回空
+			return null;
+		}
+
+	}
+
+	private void IOSHistoryManage(HttpServletRequest request,
+			HttpServletResponse response, PrintWriter out, String command,
+			String platform) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void PCHistoryManage(HttpServletRequest request,
+			HttpServletResponse response, PrintWriter out, String command,
+			String platform) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @param filePath
+	 */
+	private void initFile(String filePath) {
+		File file = new File(filePath);
+		if (file.exists()) {
+			FileOperate.deleteFiles(filePath);
+			file.mkdirs();
+		} else {
+			file.mkdirs();
+		}
+	}
+
+}

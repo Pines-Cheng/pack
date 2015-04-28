@@ -1,0 +1,6 @@
+#!/bin/bash
+
+svn update https://svn.sucunyun.com/repos/crab/Android/SucunCloudStor
+
+#echo "excute svn_update" 
+

@@ -1,0 +1,43 @@
+//在页面加载完成之后，先执行初始化页面的事件
+$(document).ready(function() {
+	init_page();
+});
+
+
+//为修改安卓端配置文件添加事件，fancybox的配置及调用
+$(document).ready(function() {
+	//无边框！！！
+	$(".fancybox")
+		.attr('rel', 'gallery')
+		.fancybox({
+			padding: 0,
+			arrows: false,
+			nextClick: false,
+			closeClick: false,
+			mouseWheel: false,
+			helpers: {
+				overlay: {
+					closeClick: false
+				}
+			}
+		});
+
+});
+
+$(document).ready(function() {
+	$(".fancybox").fancybox({
+		openEffect	: 'none',
+		closeEffect	: 'none'
+	});
+});
+
+
+//每次点击公司名，都会出发公司名选择事件，为公司选择绑定多个事件
+$("#company_button>input").click(function(event) {
+	/* Act on the event */
+	//修改当前公司，并显示公司名
+	check_company_select();
+	
+	//alert("haha");
+	//改变按钮样式
+});

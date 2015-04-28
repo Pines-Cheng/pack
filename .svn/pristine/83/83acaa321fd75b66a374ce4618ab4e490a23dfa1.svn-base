@@ -1,0 +1,100 @@
+package com.util;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServlet;
+
+public class GetPath {
+
+	/**
+	 * @throws IOException
+	 * @category ��ȡ�����������ļ��ľ��·��
+	 */
+	public static String getPropertiesFilePath(HttpServlet servlet,
+			String platform) {
+		// ���·��
+		String relativePath = servlet.getServletContext().getInitParameter(
+				platform + "PropertiesFilePath");
+		return new String(servlet.getServletContext().getRealPath("/")
+				+ relativePath);
+
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ��ȡ��׿�˴������������ļ��ľ��·��
+	 */
+	public static String getConfigFilePath(HttpServlet servlet, String platform)
+			throws IOException {
+		// webӦ�þ��·��+��׿�˴��������ļ���savePath��Android/configPath+��׿����properties�ļ���
+
+		String configFileName = PropertiesOperate.getProperties(
+				"configFileName", getPropertiesFilePath(servlet, platform));
+		return new String(GetPath.getConfigfolderPath(servlet, platform) + "/"
+				+ configFileName);
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ��ȡ��׿�˴������ĵڶ��������ļ��ľ��·��
+	 */
+	public static String getConfigFile2Path(HttpServlet servlet, String platform)
+			throws IOException {
+		// webӦ�þ��·��+��׿�˴��������ļ���savePath��Android/configPath+��׿����properties�ļ���
+
+		String configFileName = PropertiesOperate.getProperties(
+				"configFileName2", getPropertiesFilePath(servlet, platform));
+		return new String(GetPath.getConfigfolderPath(servlet, platform) + "/"
+				+ configFileName);
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ��ȡ���������ļ��еľ��·��
+	 */
+	public static String getConfigfolderPath(HttpServlet servlet,
+			String platform) throws IOException {
+		// webӦ�þ��·��+��׿�˴��������ļ���savePath��Android/configPath
+		String savePath = PropertiesOperate.getProperties("savePath",
+				GetPath.getPropertiesFilePath(servlet, platform));
+
+		return new String(servlet.getServletContext().getRealPath("/")
+				+ savePath);
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ��ȡshell�ű��ľ��·��
+	 */
+	public static String getShellPath(HttpServlet servlet, String platform)
+			throws IOException {
+		String shellScriptName = PropertiesOperate.getProperties(
+				"shellScriptName", getPropertiesFilePath(servlet, platform));
+		return new String(servlet.getServletContext().getRealPath("/")
+				+ platform + "/" + shellScriptName);
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ��ȡ��׿�˴���ļ��ľ��·��
+	 */
+	public static String getDownloadPath(HttpServlet servlet, String platform)
+			throws IOException {
+		String downloadFileName = PropertiesOperate.getProperties(
+				"downloadFileName", getPropertiesFilePath(servlet, platform));
+		return new String(GetPath.getConfigfolderPath(servlet, platform) + "/"
+				+ downloadFileName);
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ��ȡ��׿����־�ļ��ľ��·��
+	 */
+	public static String getLogPath(HttpServlet servlet, String platform)
+			throws IOException {
+		String logName = PropertiesOperate.getProperties("log",
+				getPropertiesFilePath(servlet, platform));
+		return new String(servlet.getServletContext().getRealPath("/")
+				+ platform + "/" + logName);
+	}
+}

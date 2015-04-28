@@ -1,0 +1,34 @@
+package com.util;
+
+import java.io.File;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
+public class XML {
+
+	public static void main(String[] args) throws Exception {
+
+		String filePath = new String("AndroidManifest.xml");
+
+		System.out.println("返回的是" + getVersionCode(filePath));
+	}
+
+	public static String getVersionCode(String filePath)
+			throws DocumentException, Exception {
+		SAXReader saxReader = new SAXReader();
+
+		Document document = saxReader.read(new File(filePath));
+
+		// 获取根元素
+		Element root = document.getRootElement();
+		System.out.println("Root: " + root.getName());
+
+		// 输出其属性
+		System.out.println("first World Attr: " + root.attribute(1).getName()
+				+ "=" + root.attributeValue("versionCode"));
+		return root.attributeValue("versionCode");
+	}
+}

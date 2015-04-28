@@ -1,0 +1,249 @@
+package com.util;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+
+/**
+ * @category ļ�����
+ */
+public class FileOperate {
+
+	public static void main(String[] args) throws IOException {
+		MyLog.LogInit("log.html");
+		// copyFile("e:/log.txt", "e:/copy.txt");
+		copyDir("e:/test", "e:/new");
+	}
+
+	File file;
+	private String configFilePath;
+
+	/**
+	 * @category 构造函数
+	 */
+	public FileOperate(String congfigFilePath) {
+		this.configFilePath = congfigFilePath;
+
+		file = new File(configFilePath);
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * @category 递归删除目录下的所有文件
+	 */
+	public static void deleteFiles(String filePath) {
+		MyLog.logger.info("要删除的根文件/目录" + filePath);
+		File file = new File(filePath);
+		if (file.exists()) {
+			// MyLog.logger.info("exists");
+			if (file.isDirectory()) {
+				File[] fileList = file.listFiles();
+				// 递归
+				for (int i = 0; i < fileList.length; i++) {
+
+					if (fileList[i].isFile()) {
+						if (fileList[i].delete()) {
+							MyLog.logger
+									.info("删除文件/目录" + fileList[i].getName());
+						} else {
+							MyLog.logger.error(fileList[i].getName() + "删除失败！");
+						}
+					}
+					if (fileList[i].isDirectory()) {
+						FileOperate.deleteFiles(fileList[i].getAbsolutePath());
+					}
+				}
+			}
+		} else {
+			MyLog.logger.error("要删除的根文件/目录" + filePath + "不存在！");
+		}
+	}
+
+	/**
+	 * @throws IOException
+	 * @category 复制src目录下的文件到dir目录下
+	 */
+	public static int copyDir(String sourceFilePath, String destinationPath)
+			throws IOException {
+		int numberOfFilesCopied = 0;
+		File sourceFileOrDirectory = new File(sourceFilePath);
+		File destinationFileOrDirectory = new File(destinationPath);
+		if (sourceFileOrDirectory.isDirectory()) {
+			// 创建目标目录
+			destinationFileOrDirectory.mkdirs();
+			String list[] = sourceFileOrDirectory.list();
+
+			for (int i = 0; i < list.length; i++) {
+				String dest1 = destinationFileOrDirectory.getPath()
+						+ File.separator + list[i];
+				String src1 = sourceFileOrDirectory.getPath() + File.separator
+						+ list[i];
+				numberOfFilesCopied += copyDir(src1, dest1);
+			}
+		} else {
+			InputStream fin = new FileInputStream(sourceFileOrDirectory);
+			fin = new BufferedInputStream(fin);
+			try {
+				OutputStream fout = new FileOutputStream(
+						destinationFileOrDirectory);
+				fout = new BufferedOutputStream(fout);
+				try {
+					int c;
+					while ((c = fin.read()) >= 0) {
+						fout.write(c);
+					}
+				} finally {
+					fout.close();
+				}
+			} finally {
+				fin.close();
+			}
+			numberOfFilesCopied++;
+		}
+		return numberOfFilesCopied;
+	}
+
+	/**
+	 * @throws IOException
+	 * @category 复制文件
+	 */
+	private static void copyFile(String srcFilePath, String dirFilePath) {
+		try {
+			File f1 = new File(srcFilePath);
+			File f2 = new File(dirFilePath);
+			if (f1.exists()) {
+				if (!f2.exists()) {
+					f2.createNewFile();
+				}
+				InputStream in = new FileInputStream(f1);
+				OutputStream out = new FileOutputStream(f2, true);
+				byte[] buf = new byte[1024];
+				int len;
+
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+
+				in.close();
+				out.close();
+				System.out.println("File copied.");
+			} else {
+				System.out.println(srcFilePath + "文件不存在！");
+			}
+
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
+	}
+
+	/**
+	 * @category 创建文件，如果文件存在，则清空文件
+	 */
+	public void clearFile() throws IOException {
+		file = new File(configFilePath);
+		if (!file.isFile()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			file.delete();
+			file.createNewFile();
+		}
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ӡ��������Ϣ
+	 */
+	public void printf() throws IOException {
+		String readline;
+		file = new File(configFilePath);
+		BufferedReader br = new BufferedReader(new InputStreamReader(
+				new FileInputStream(configFilePath), "UTF-8"));
+		while ((readline = br.readLine()) != null) {
+			MyLog.logger.info(readline);
+		}
+		br.close();
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public String getConfigFilePath() {
+		return configFilePath;
+	}
+
+	/**
+	 * @throws IOException
+	 * @category 如果文件不存在，就创建新的文件
+	 */
+	public static void ifFileNotExistThenCreate(String filePath)
+			throws IOException {
+		File file = new File(filePath);
+		if (!file.exists()) {
+			file.createNewFile();
+			MyLog.logger.info(filePath + "文件被创建");
+		}
+	}
+
+	/**
+	 * @throws IOException
+	 * @category 如果目录不存在，就创建新的目录
+	 */
+	public static void ifDirNotExistThenCreate(String filePath)
+			throws IOException {
+		File file = new File(filePath);
+		if (!file.exists()) {
+			file.mkdir();
+			MyLog.logger.info(filePath + "目录被创建");
+		}
+	}
+
+	/**
+	 * @throws IOException
+	 * @category 如果公司的目录树不存在，就创建
+	 */
+	public static void initCompanyFileTree(String companysFilePath,
+			String selectCompanyName) throws IOException {
+		// 获取选中的pack文件夹路径
+		// 判断公司文件夹下是否存在，若不存在就创建
+		FileOperate.ifDirNotExistThenCreate(companysFilePath);
+		// 获取选中的公司的配置文件夹路径
+		String companyFilePath = companysFilePath + "/" + selectCompanyName;
+		// 判断公司文件夹下是否存在，若不存在就创建
+		FileOperate.ifDirNotExistThenCreate(companyFilePath);
+		// 获取选中的公司的images文件夹路径
+		String companyImagesFilePath = companyFilePath + "/" + "Images";
+		FileOperate.ifDirNotExistThenCreate(companyImagesFilePath);
+		// 获取选中的公司的config文件夹路径
+		String companyconfigFilePath = companyFilePath + "/" + "config";
+		FileOperate.ifDirNotExistThenCreate(companyconfigFilePath);
+		// 获取选中的公司的config1文件路径
+		String companyconfig1FilePath = companyconfigFilePath + "/"
+				+ "config.properties";
+		FileOperate.ifFileNotExistThenCreate(companyconfig1FilePath);
+		// 获取选中的公司的config2文件路径
+		String companyconfig2FilePath = companyconfigFilePath + "/" + "config2";
+		FileOperate.ifFileNotExistThenCreate(companyconfig2FilePath);
+		// 获取选中的公司的log文件夹路径
+		String companylogFilePath = companyFilePath + "/" + "log";
+		FileOperate.ifDirNotExistThenCreate(companylogFilePath);
+	}
+}

@@ -1,0 +1,325 @@
+//在页面加载完成之后，先执行初始化页面的事件
+$(document).ready(function() {
+	init_page();
+});
+
+
+//为修改安卓端配置文件添加事件，fancybox的配置及调用
+$(document).ready(function() {
+	//无边框！！！
+	$(".fancybox_config")
+		.attr('rel', 'gallery')
+		.fancybox({
+			padding: 0,
+			arrows: false,
+			nextClick: false,
+			closeClick: false,
+			mouseWheel: false,
+			helpers: {
+				overlay: {
+					closeClick: false
+				}
+			},
+
+			afterClose: function() {
+				setTimeout(function() {
+					getCompanyImages(encodeURI("/pack/getCompanyInfo"))
+				}, 1000);
+
+				return;
+			}
+		});
+
+
+});
+
+//打包的fancybox,退出时自动删除临时文件
+$(document).ready(function() {
+	//无边框！！！
+	$(".fancybox_pack")
+		.attr('rel', 'gallery')
+		.fancybox({
+			padding: 0,
+			arrows: false,
+			nextClick: false,
+			closeClick: false,
+			mouseWheel: false,
+			helpers: {
+				overlay: {
+					closeClick: false
+				}
+			},
+			afterClose: function() {
+				//alert("执行ajax删除！");
+				setTimeout(function() {
+					getCompanyImages(encodeURI("/pack/getCompanyInfo"))
+				}, 1000);
+
+				console.log($("body").attr("packResult"));
+
+				if ($("body").attr("packResult") == "SUCCESS") {
+					if (confirm("是否保存本次打包生成的安装包？") == false) {
+						var result = $("body").attr('androidProjectDestPath');
+						if (result != null || result != undefined) {
+							console.log("发送ajax!,删除临时文件！");
+							$.ajax({
+
+									url: "/pack/packServlet?command=delete&deleteFilePath=" + result,
+
+								})
+								.done(function() {
+									console.log("success");
+								})
+								.fail(function() {
+									console.log("error");
+								})
+								.always(function() {
+									console.log("complete");
+								});
+						} else {
+							console.log("删除临时文件时，返回的result数据不存在！");
+						}
+					} else {
+						console.log("点击了确认，保存！");
+						var result = $("body").attr('androidProjectDestPath');
+						if (result != null || result != undefined) {
+							console.log("发送ajax!,删除临时文件！");
+							$.ajax({
+
+									url: "/pack/packServlet?command=save&androidProjectDestPath=" + result,
+
+								})
+								.done(function() {
+									console.log("success");
+								})
+								.fail(function() {
+									console.log("error");
+								})
+								.always(function() {
+									console.log("complete");
+								});
+
+							//更新打包历史
+							changePackHistoryPlatform();
+
+						} else {
+							console.log("删除临时文件时，返回的result数据不存在！");
+						}
+					}
+				}
+
+				//将打包结果和打包返回信息清空
+				$("body").attr('androidProjectDestPath',"");
+				$("body").attr('packResult', "ERROR");
+			}
+
+
+		});
+});
+
+$(document).ready(function() {
+	$(".fancybox").fancybox({
+		openEffect: 'none',
+		closeEffect: 'none'
+	});
+});
+
+
+//每次点击公司名，都会出发公司名选择事件，为公司选择绑定多个事件
+$("#company_button>input").click(function(event) {
+	/* Act on the event */
+	//修改当前公司，并显示公司名
+	check_company_select();
+
+	//alert("haha");
+	//改变按钮样式
+});
+
+//修改安卓配置文件的事件
+$("#android_config_button").click(function(event) {
+	//alert("进入");
+
+	//自动显示服务器上保存的图片名
+	// getCompanyImages(encodeURI("/pack/getCompanyInfo"));		
+
+
+});
+
+//删除一个公司名
+$("#delete_button").click(function(event) {
+	var url = "/pack/companyNameOperateServlet?command=delete&selectedCompanyName=" + $("body").attr("selectCompanyName");
+	sendRequest(url);
+	window.location.reload();
+});
+
+
+//搜索
+function search() {
+
+	if ($("#search_input").val() != null && $("#search_input").val() != "") {
+		//添加完之后，清空companyNames
+		$("#company_button").empty();
+		//刷新
+		getCompanyList();
+		//选中
+		$("#" + $("body").attr("selectCompanyName")).trigger('click');
+		check_company_select();
+
+		//遍历input,取得value
+		var searchText = $("#search_input").val();
+		//alert(searchText);
+		$("input[type=radio]").each(function(index, value) {
+
+			//alert(index + ":" + $(value).val());
+			if ($(value).val().search(searchText) == -1) {
+				$(value).css('display', 'none');
+				$(value).next().css('display', 'none');
+			}
+		});
+
+	} else {
+		//添加完之后，清空companyNames
+		$("#company_button").empty();
+		//刷新
+		getCompanyList();
+		//选中
+		$("#" + $("body").attr("selectCompanyName")).trigger('click');
+		check_company_select();
+	}
+
+}
+
+
+
+//删除公司文件名
+function sendRequest(url) {
+	$.ajax({
+			url: url,
+
+		})
+		.done(function() {
+			console.log("success");
+			//添加完之后，清空companyNames
+			$("#company_button").empty();
+
+			//刷新
+			getCompanyList();
+
+			//选中
+			$("#" + $("body").attr("selectCompanyName")).trigger('click');
+			check_company_select();
+		})
+		.fail(function() {
+			console.log("error");
+			alert("请求失败！");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+}
+
+//改变打包历史平台时
+function changePackHistoryPlatform() {
+	var test = $("#home_select_platform option:selected").text();
+	console.log(test);
+	//每次选中之后都发送请求
+	if (test == "android") {
+
+		get_android_history();
+	} else if (test == "IOS") {
+		$("#home_select_history").empty();
+	} else if (test == "PC") {
+		$("#home_select_history").empty();
+	}
+
+	$("#home_select_platform").change(function() {
+		var test = $("#home_select_platform option:selected").text();
+		console.log(test);
+		//每次选中之后都发送请求
+		if (test == "android") {
+
+			get_android_history();
+		} else if (test == "IOS") {
+			$("#home_select_history").empty();
+		} else if (test == "PC") {
+			$("#home_select_history").empty();
+		}
+	});
+}
+
+//获取安卓历史版本
+function get_android_history() {
+	$.ajax({
+			url: "/pack/historyServlet",
+			dataType: 'jsonp',
+
+			jsonp: "callback", //传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+			jsonpCallback: "callback", //自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，也可以写"?"，jQuery会自动为你处理数据
+
+			success: function(result) {
+				//清空显示
+				$("#home_select_history").empty();
+				if (result.keys != null && typeof(result.keys) != "undefined") {
+					//不为空，遍历，显示历史打包
+
+					for (var i in result.keys) {
+						var historyPackCompanyFile = result.keys[i];
+
+						$("#home_select_history").append('<option>' + historyPackCompanyFile + '</option>');
+					}
+
+				} else {
+					//为空，则显示无
+
+					$("#home_select_history").append('<option>历史打包文件不存在!</option>');
+
+				}
+
+			}
+		})
+		.done(function() {
+			console.log("success");
+		})
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+}
+
+//历史版本下载
+$("#home_pack_download").click(function(event) {
+	var select_platform = $("#home_select_platform option:selected").text();
+	var select_file = $("#home_select_history option:selected").text();
+	//如果显示存在历史打包文件
+	if (select_platform == "android" && select_file != "历史打包文件不存在!") {
+
+
+		window.open("/pack/historyServlet?command=download&downloadFileName=" + select_file);
+
+	}
+});
+
+//历史版本删除
+$("#home_pack_delete").click(function(event) {
+	var select_platform = $("#home_select_platform option:selected").text();
+	var select_file = $("#home_select_history option:selected").text();
+	//如果显示存在历史打包文件
+	if (select_platform == "android" && select_file != "历史打包文件不存在!") {
+		$.ajax({
+				url: "/pack/historyServlet?command=delete&deleteFileName=" + select_file
+
+			})
+			.done(function() {
+				console.log("home_pack_delete success");
+				changePackHistoryPlatform();
+			})
+			.fail(function() {
+				console.log("error");
+			})
+			.always(function() {
+				console.log("complete");
+			});
+	}
+});

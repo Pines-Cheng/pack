@@ -1,0 +1,111 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.util.FileOperate;
+import com.util.MyLog;
+import com.util.PropertiesOperate;
+
+public class configSaveServlet extends HttpServlet {
+
+	// 公司配置文件名
+	static String companyPropertiesPath;
+	static String companysFilePath;
+	static String tomcatCompanysFilePath;
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+
+		// 初始化路径
+		String selectedCompanyName = request.getSession()
+				.getAttribute("selectedCompanyName").toString();
+		MyLog.logger.info("从session里面获取的selectedCompanyName为："
+				+ selectedCompanyName);
+
+		String basePath = request.getRealPath("");
+		String localDir = new String(basePath + "/pack/" + selectedCompanyName
+				+ "/Images");
+
+		// 获取配置文件的路径
+		String configPath = new String(companysFilePath + "/"
+				+ selectedCompanyName + "/config");
+		// 获取android.peroperties的路径
+		String androidPropertiesPath = new String(configPath
+				+ "/android.properties");
+		// 获取config.peroperties的路径
+		String configPropertiesPath = new String(configPath
+				+ "/config.properties");
+
+		// 将两个配置文件都清空
+		FileOperate.clearFile(androidPropertiesPath);
+		FileOperate.clearFile(configPropertiesPath);
+
+		// 获取request参数
+		try {
+			Enumeration<String> enm = request.getParameterNames();
+			while (enm.hasMoreElements()) {
+				String name = enm.nextElement();
+				if (name.equals("callback") || name.equals("_")) {
+					continue;
+				}
+				if (name.equals("defaultset") || name.equals("serverip")
+						|| name.equals("serverport")) {
+					PropertiesOperate.appendProperties(name,
+							request.getParameter(name), configPropertiesPath,
+							null);
+				} else {
+					PropertiesOperate.appendProperties(name,
+							request.getParameter(name), androidPropertiesPath,
+							null);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			out.println("error");
+		}
+		out.println("success");
+
+		// out.println("configSaveServlet");
+		out.flush();
+		out.close();
+
+	}
+
+	/**
+	 * Initialization of the servlet. <br>
+	 * 
+	 * @throws ServletException
+	 *             if an error occurs
+	 */
+	public void init(ServletConfig config) throws ServletException {
+		// 获取公司名的配置文件??只可以在init里面做吗？？？
+		companyPropertiesPath = config.getServletContext().getInitParameter(
+				"companyName");
+		System.out.println(companyPropertiesPath);
+		MyLog.logger.info(companyPropertiesPath);
+		// 获取公司文件信息的文件夹路径
+		companysFilePath = config.getServletContext().getInitParameter(
+				"companysFilePath");
+		MyLog.logger.info(companysFilePath);
+		// 获取tomcat下pack文件夹路径
+		tomcatCompanysFilePath = config.getServletContext().getInitParameter(
+				"tomcatCompanysFilePath");
+	}
+
+}

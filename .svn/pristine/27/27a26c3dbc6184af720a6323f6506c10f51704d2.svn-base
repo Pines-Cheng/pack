@@ -1,0 +1,40 @@
+package com.util;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+public class ServletUtil {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @category 将http的参数解析出来，并输出到日志中
+	 */
+	public static void praseParaments(HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		// 获取参数列表,并解析出来
+		Map<String, String[]> ParameterMap = request.getParameterMap();
+		if (ParameterMap != null) {
+			// 遍历Map
+			for (String key : ParameterMap.keySet()) {
+				System.out.println(key);
+				// 遍历数组
+				for (int i = 0; i < ParameterMap.get(key).length; i++) {
+
+					System.out.println(ParameterMap.get(key)[i]);
+				}
+			}
+		} else {
+			System.out.println("传过来的参数为空！");
+		}
+	}
+
+}

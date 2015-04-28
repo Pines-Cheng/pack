@@ -1,0 +1,72 @@
+package com.util.file;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+
+import com.util.FileOperate;
+
+public class FileOperateOutput extends FileOperate {
+
+	private BufferedReader br;
+	public String readline;
+
+	public FileOperateOutput(String congfigFilePath) {
+		super(congfigFilePath);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @category ��ʼ���ļ����
+	 */
+	public void openFileOutput() throws FileNotFoundException,
+			UnsupportedEncodingException {
+		br = new BufferedReader(new InputStreamReader(new FileInputStream(
+				super.getConfigFilePath()), "UTF-8"));
+	}
+
+	/**
+	 * @category ��ȡһ����Ϣ
+	 */
+	public String getLine() {
+		try {
+			if ((readline = br.readLine()) != null) {
+				return readline;
+			} else {
+				return null;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("��ȡ��ʧ��");
+			return null;
+		}
+	}
+
+	/**
+	 * @category �ر������
+	 */
+	public void closeFileOutput() {
+		try {
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @category �ļ����д�ӡ���
+	 */
+	public void printf() throws IOException {
+		String readline;
+		BufferedReader br = new BufferedReader(new InputStreamReader(
+				new FileInputStream(super.getConfigFilePath()), "UTF-8"));
+		while ((readline = br.readLine()) != null) {
+			System.out.println(readline);
+		}
+		br.close();
+	}
+}

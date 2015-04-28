@@ -1,0 +1,148 @@
+package com.servlet;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.util.FileOperate;
+import com.util.MyLog;
+import com.util.ShellOperate;
+
+public class packServlet extends HttpServlet {
+
+	// 公司配置文件名
+	static String androidTempPackPath;
+	static String companysFilePath;
+	static String androidProjectPath;
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		request.setCharacterEncoding("UTF-8");
+
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("utf-8");
+		PrintWriter out = response.getWriter();
+
+		String command = request.getParameter("command");
+		if (command.equals("pack")) {
+			// out.println("pack");
+			try {
+				pack(request, response, out);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (command.equals("save")) {
+			out.println("save");
+		}
+		if (command.equals("delete")) {
+			out.println("delete");
+		}
+
+	}
+
+	/**
+	 * Initialization of the servlet. <br>
+	 * 
+	 * @throws ServletException
+	 *             if an error occurs
+	 */
+	public void init(ServletConfig config) throws ServletException {
+
+		// 获取公司文件信息的文件夹路径
+		companysFilePath = config.getServletContext().getInitParameter(
+				"companysFilePath");
+
+		androidProjectPath = config.getServletContext().getInitParameter(
+				"androidProjectPath");
+		androidTempPackPath = config.getServletContext().getInitParameter(
+				"androidTempPackPath");
+	}
+
+	/**
+	 * @throws Exception
+	 * @category 到一个临时文件夹打包
+	 * @throws ServletException
+	 *             if an error occurs
+	 */
+	public void pack(HttpServletRequest request, HttpServletResponse response,
+			PrintWriter out) throws Exception {
+		// 获取需要的路径
+		Date date = new Date();
+		String selectedCompanyName = request.getSession()
+				.getAttribute("selectedCompanyName").toString();
+		// 临时随机文件夹
+		String androidProjectDestPath = new String(androidTempPackPath + "/"
+				+ selectedCompanyName + "/" + String.valueOf(date.getTime()));
+
+		// 获取配置文件的路径
+		String configPath = new String(companysFilePath + "/"
+				+ selectedCompanyName + "/config");
+		// 获取android.peroperties的路径
+		String androidPropertiesSrcPath = new String(configPath
+				+ "/android.properties");
+		// 获取config.peroperties的路径
+		String configPropertiesSrcPath = new String(configPath
+				+ "/config.properties");
+		// 获取pic.properties的路径
+		String picPropertiesSrcPath = new String(configPath + "/pic.properties");
+
+		String configPropertiesDestPath = new String(androidProjectDestPath
+				+ "/assets/config.properties");
+
+		String androidPropertiesDestPath = new String(androidProjectDestPath
+				+ "/android.properties");
+		String picPropertiesDestPath = new String(androidProjectDestPath
+				+ "/pic.properties");
+
+		// 1.复制文件
+		FileOperate.copyDir(androidProjectPath, androidProjectDestPath);
+		FileOperate.copyDir(configPropertiesSrcPath, configPropertiesDestPath);
+		FileOperate
+				.copyDir(androidPropertiesSrcPath, androidPropertiesDestPath);
+		FileOperate.copyDir(picPropertiesSrcPath, picPropertiesDestPath);
+
+		// 2.运行脚本
+		// 复制脚本
+		String shellStringSrcPath = new String(request.getRealPath("/")
+				+ File.separator + "androidPack.sh");
+
+		String shellStringDestPath = new String(androidProjectDestPath
+				+ File.separator + "androidPack.sh");
+		FileOperate.copyDir(shellStringSrcPath, shellStringDestPath);
+
+		String[] shellString = new String[] { "sh",
+				androidProjectDestPath + File.separator + "androidPack.sh",
+				androidProjectDestPath };
+		// String[] shellString = new String[] { "ls", "-al" };
+		out.println("/pack/temp" + File.separator + selectedCompanyName
+				+ File.separator + androidProjectDestPath.split("/")[6]
+				+ File.separator + "shellOperateLog");
+
+		// File file = new File(shellOperateLogPath);
+		response.flushBuffer();
+
+		out.close();
+		MyLog.logger.info("sh " + androidProjectDestPath + File.separator
+				+ "androidPack.sh" + androidProjectDestPath);
+
+		ShellOperate.shellOperate(shellString);
+
+		// 3.
+	}
+}

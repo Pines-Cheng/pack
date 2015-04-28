@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>android配置文件修改</title>
+
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
+
+	<!-- Add fancyBox -->
+	<link rel="stylesheet" href="./fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
+
+	<!-- Optionally add helpers - button, thumbnail and/or media -->
+	<link rel="stylesheet" href="./fancybox/source/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen" />
+
+	<link rel="stylesheet" href="./fancybox/source/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen" />
+
+	<!--我自己的CSS样式-->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/message.css">
+	<link rel="stylesheet" type="text/css" href="css/webuploader.css"></head>
+
+<body style="overflow:scroll !important">
+	<br>
+	<div class="container">
+		<div class="panel panel-primary" align="center">
+			<div class="panel-heading">android端配置文件编辑</div>
+			<div class="panel-body">
+				<div style="margin-bottom:5px">
+					<h5 class="label label-primary">安卓端LOGO</h5>
+				</div>
+				<div class="panel panel-default">
+					<!-- android端的logo显示 -->
+					<div class="panel-body"  >
+
+						<div id="fileList" class="uploader-list" ></div>
+
+					</div>
+				</div>
+
+				<table>
+					<tr>
+						<th    class="col-sm-12" text-align="left">
+							<button  type="button"  class="btn btn-danger  btn-default" id="deleteImages"  >删除全部logo</button>
+						</th>
+						<th     class="col-sm-12"  text-align="right">
+							<div   id="filePicker" class="btn btn-info  btn-default" >批量上传logo</div>
+						</th>
+					</tr>
+
+				</table>
+
+				<div style="margin-bottom:5px">
+					<h5 class="label label-primary">android端配置文件</h5>
+				</div>
+				<h5 id="androidCondigTips" style="color:red"></h5>
+
+				<div class="panel panel-default">
+					<!-- android端的配置文件显示 -->
+					<div class="panel-body" 
+						id="frame_android_config_file">
+
+						<form class="form-horizontal" role="form" align="left">
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >应用名：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control input-sm " placeholder="如：金山网盘" name="appName" ></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputPassword3" class="col-sm-2 control-label ">下载文件保存目录：</label>
+								<div class="col-sm-10">
+									<input type="text " class="form-control input-sm"  placeholder="如：KingCloud" name="spaceName"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputPassword3" class="col-sm-2 control-label">APK 包 名：</label>
+								<div class="col-sm-10">
+									<input type="text " class="form-control input-sm"  placeholder="如：SucunCloudStor" name="publishApkName"></div>
+							</div>
+
+							<div class="form-group">
+
+								<label for="inputPassword3" class="col-sm-2 control-label">使用svn默认版本名：</label>
+								<div class="radio col-sm-1">
+									<label>
+										<input type="radio" name="svnset" value="true"  id="androidUseSvnVersionCodeTrue" >是</label>
+								</div>
+								<div class="radio col-sm-1">
+									<label>
+										<input type="radio" name="svnset" value="false" id="androidUseSvnVersionCodeFalse" checked="true">否</label>
+								</div>
+								<div class="radio  col-sm-6" align="right">
+									当前版本： <font id="current_android_svn_version" style="color:red "></font>
+								</div>
+								<div class="radio  col-sm-2" align="right">
+									<button type="button" class="btn btn-info " id="android_svn_update" >更新版本</button>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label">版本号：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control input-sm" placeholder="必须为数字，如：2030" name="versionCode"></div>
+							</div>
+							<div class="form-group">
+								<label for="inputPassword3" class="col-sm-2 control-label">版本名：</label>
+								<div class="col-sm-10">
+									<input type="text " class="form-control input-sm"  placeholder="如：2.0.3.0" name="versionName"></div>
+							</div>
+
+							<div class="form-group">
+
+								<label for="inputPassword3" class="col-sm-2 control-label">设置默认IP与端口：</label>
+								<div class="radio col-sm-1">
+									<label>
+										<input type="radio" name="defaultset" value="true"  id="androidDefaultsetTrue" checked="true">是</label>
+								</div>
+								<div class="radio col-sm-1">
+									<label>
+										<input type="radio" name="defaultset" value="false" id="androidDefaultsetFalse">否</label>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputPassword3" class="col-sm-2 control-label" >默认端口：</label>
+								<div class="col-sm-10">
+									<input type="text " class="form-control input-sm"  placeholder="服务器默认的IP号" name="serverip"></div>
+							</div>
+							<div class="form-group">
+								<label for="inputPassword3" class="col-sm-2 control-label" >默认IP：</label>
+								<div class="col-sm-10">
+									<input type="text " class="form-control input-sm"  placeholder="服务器默认的端口号" name="serverport"></div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-10" align="right">
+									<button  type="button" class="btn btn-info" id="androidConfigSubmit">保存配置</button>
+								</div>
+							</div>
+						</form>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+	<script type="text/javascript" src="js/jquery-1.11.2.js"></script>
+
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+	<!-- Add mousewheel plugin (this is optional)  图片预览   -->
+	<script type="text/javascript" src="./fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+
+	<script type="text/javascript" src="./fancybox/source/jquery.fancybox.js"></script>
+	<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-buttons.js"></script>
+	<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-media.js"></script>
+	<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-thumbs.js"></script>
+
+	<!-- 文件上传 -->
+	<script type="text/javascript" src="js/webuploader.js"></script>
+	<script type="text/javascript" src="js/config.js"></script>
+
+	<script type="text/javascript" src="js/page.js"></script>
+	<script type="text/javascript" src="js/event.js"></script>
+
+	<script type="text/javascript">
+
+	$(document).ready(function() {
+			 getCompanyImages(encodeURI("/pack/getCompanyInfo"));
+			//获取版本号,加个延时，防止页面未加载完
+			get_current_android_svn_version();
+	});
+
+	   
+		
+
+</script>
+
+</html>

@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+	<link rel="stylesheet" type="text/css"
+	href="css/bootstrap-theme.min.css">
+
+	<!-- Add jQuery library -->
+	<!-- <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+-->
+<!-- Add fancyBox -->
+<link rel="stylesheet" href="./fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
+
+<!-- Optionally add helpers - button, thumbnail and/or media -->
+<link rel="stylesheet" href="./fancybox/source/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen" />
+
+<link rel="stylesheet" href="./fancybox/source/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen" />
+
+<!--我自己的CSS样式-->
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/message.css">
+
+<title>中科云华版本打包工具</title>
+</head>
+
+<body>
+<div class="layout-top container-fluid">
+	<div class="u-title">
+		<img src="images/logo.png" class="nav-logo">
+		<span>中科云华版本打包工具</span>
+
+		<div class="u-help">
+			<a href="#">使用帮助</a>
+		</div>
+		<div class="u-log">
+			<span >|</span>
+		</div>
+
+		<div class="u-log">
+			<a href="#" target="_blank">PC</a>
+		</div>
+		<div class="u-log">
+			<a href="#" target="_blank">IOS</a>
+		</div>
+		<div class="u-help">
+			<a href="http://192.168.1.171:8080/pack/log.html" target="_blank">android</a>
+		</div>
+	</div>
+	<span class="message-tip"></span>
+</div>
+<div class="layout-left container">
+	<div class="row">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h2 class="panel-title" align="center">公 司 选 择</h2>
+			</div>
+			<div class="panel-body">
+				<div class="input-group  input-group-sm">
+					<!-- 搜索的文本框 -->
+					<input type="text" class="form-control" id="search_input">
+					<span class="input-group-btn">
+						<!-- 搜索的按钮 -->
+						<button class="btn btn-primary " type="button" id="search_button">搜索</button>
+					</span>
+				</div>
+				<!-- /input-group -->
+			<br/>
+
+			<div class="panel panel-default" id="company_panel"
+						style="height:300px;overflow-y:scroll;">
+				<!-- 公司的滚动面板 -->
+				<div class="panel-body" id="company_button">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default" id="edit_company">
+		<div class="panel-body">
+			<h5 style="margin-bottom:5px">请输入公司名称：</h5>
+			<div class="input-group  input-group-sm">
+				<!-- 添加或修改的公司的名字的文本框 -->
+				<input type="text" class="form-control" id="edit_input">
+				<span
+							class="input-group-btn">
+					<!-- 确定修改的按钮 -->
+					<button class="btn btn-primary " type="button" id="confirm_button">
+						<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+					</button>
+					<!-- 取消修改的按钮 -->
+					<button class="btn btn-danger " type="button" id="cancel_button">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					</button>
+				</span>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<!-- 修改的选定的公司名称的按钮 -->
+		<button type="button" class="btn btn-warning" id="edit_button">修改</button>
+	</div>
+	<div class="col-md-6">
+		<!-- 修添加公司的按钮 -->
+		<button type="button" class="btn btn-primary" id="add_button">添加</button>
+	</div>
+</div>
+</div>
+<div class="layout_mid container" >
+<div class="row">
+	<div class="panel panel-primary">
+		<div class="panel-heading" align="center" id="company_panel">
+			当前公司：
+			<span id="company_name_select"></span>
+		</div>
+		<div class="panel-body "  id="company_operate">
+
+			<div class="panel panel-primary">
+				<div class="panel-heading" align="center">修改配置文件</div>
+				<div class="panel-body">
+					<!-- 修修改三个端的配置文件-->
+					<a class="btn btn-default btn-sm btn-block fancybox  fancybox.iframe" id="android_config_button" href="./android_config.html" >安卓端</a>
+					<a class="btn btn-default btn-sm btn-block fancybox  fancybox.iframe" id="IOS_config_button" href="./IOS_config.html" >IOS端</a>
+					<a class="btn btn-default btn-sm btn-block fancybox  fancybox.iframe" id="PC_config_button" href="./PC_config.html" >PC端</a>
+				</div>
+			</div>
+
+			<br>
+			<div class="panel panel-primary">
+				<div class="panel-heading" align="center">打包</div>
+				<div class="panel-body">
+					<!-- 各个端的打包按钮 -->
+					<a class="btn btn-default btn-sm btn-block fancybox  fancybox.iframe" id="PC_config_button" href="./pack.html" >安卓端</a>
+					<a class="btn btn-default btn-sm btn-block fancybox  fancybox.iframe" id="PC_config_button" href="./pack.html" >IOS端</a>
+					<a class="btn btn-default btn-sm btn-block fancybox  fancybox.iframe" id="PC_config_button" href="./pack.html" >PC端</a>
+					<a class="btn btn-default btn-sm btn-block fancybox  fancybox.iframe" id="PC_config_button" href="./pack.html" >一键全部打包</a>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+</div>
+<div class="layout_main">
+
+<div class="config_container">
+	<div class="panel panel-default">
+		<div class="panel-body" align="center">
+			<div style="margin-bottom:5px">
+				<h5 class="label label-primary">安卓端配置文件</h5>
+			</div>
+			<h5 align="left">&nbsp;&nbsp;logo:</h5>
+			<div class="panel panel-default">
+				<!-- android端的logo显示 -->
+				<div class="panel-body" id="android_logo">
+
+
+				</div>
+			</div>
+			<h5 align="left">&nbsp;&nbsp;配置文件:</h5>
+			<div class="panel panel-default">
+				<!-- android端的配置文件显示 -->
+				<div class="panel-body"  id="android_config_file">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="config_container">
+	<div class="panel panel-default">
+		<div class="panel-body" align="center">
+			<div style="margin-bottom:5px">
+				<h5 class="label label-primary">IOS端配置文件</h5>
+			</div>
+			<h5 align="left">&nbsp;&nbsp;logo:</h5>
+			<div class="panel panel-default">
+				<!-- IOS端的logo显示 -->
+				<div class="panel-body" style="max-height:300px" id="IOS_logo"></div>
+			</div>
+			<h5 align="left">&nbsp;&nbsp;配置文件:</h5>
+			<div class="panel panel-default">
+				<!-- IOS端的配置文件显示 -->
+				<div class="panel-body" style="height:50px"  id="IOS_config_file"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="config_container">
+	<div class="panel panel-default">
+		<div class="panel-body" align="center">
+			<div style="margin-bottom:5px">
+				<h5 class="label label-primary">PC端配置文件</h5>
+			</div>
+			<h5 align="left">&nbsp;&nbsp;logo:</h5>
+			<div class="panel panel-default">
+				<!-- PC端的logo显示 -->
+				<div class="panel-body" style="max-height:300px" id="PC_logo"></div>
+			</div>
+			<h5 align="left">&nbsp;&nbsp;配置文件:</h5>
+			<div class="panel panel-default">
+				<!-- PC端的配置文件显示 -->
+				<div class="panel-body" style="max-height:50px"  id="PC_config_file"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script type="text/javascript" src="js/jquery-1.11.2.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<script type="text/javascript" src="js/event.js"></script>
+
+<!-- Add mousewheel plugin (this is optional) -->
+<script type="text/javascript" src="./fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+
+<script type="text/javascript" src="./fancybox/source/jquery.fancybox.js"></script>
+<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-buttons.js"></script>
+<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-media.js"></script>
+<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-thumbs.js"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+</body>
+</html>

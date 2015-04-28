@@ -1,0 +1,137 @@
+package com.servlet;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.util.FileOperate;
+import com.util.MyLog;
+import com.util.PropertiesOperate;
+
+public class companyNameOperateServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		response.setContentType("text/html");
+		request.setCharacterEncoding("UTF-8");
+
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("utf-8");
+
+		String command = request.getParameter("command");
+		String platform = request.getParameter("platform");
+		if (command.equals("delete")) {
+
+			JSONObject js = new JSONObject();
+
+			try {
+				// 删除properties文件中的公司名
+				PropertiesOperate.removeProperties(
+						getCompanyInfo.selectedCompanyName,
+						getCompanyName.companyPropertiesPath);
+				// 删除/usr/local/pack目录下的公司配置信息
+				FileOperate.deleteFiles(getCompanyName.companysFilePath
+						+ File.separator + "android" + File.separator
+						+ getCompanyInfo.selectedCompanyName);
+				FileOperate.deleteFiles(getCompanyName.companysFilePath
+						+ File.separator + "IOS" + File.separator
+						+ getCompanyInfo.selectedCompanyName);
+				FileOperate.deleteFiles(getCompanyName.companysFilePath
+						+ File.separator + "PC" + File.separator
+						+ getCompanyInfo.selectedCompanyName);
+
+				js.put("status", "SUCCESS");
+				js.put("message", "");
+			} catch (Exception e) {
+
+				e.printStackTrace();
+				js.put("status", "ERROR");
+				js.put("message", "删除文件出现错误！");
+			}
+
+			String jsonString = JSON.toJSONString(js);
+			jsonString = "callback(" + jsonString + ");";
+			MyLog.logger.info(jsonString);
+			out.println(jsonString);
+
+		}
+		if (command.equals("edit")) {
+			String companyName = request.getParameter("companyName");
+
+			if (PropertiesOperate.getProperties(companyName,
+					getCompanyName.companyPropertiesPath) == null) {
+
+				// 添加到配置文件中
+				PropertiesOperate.appendProperties(companyName, companyName,
+						getCompanyName.companyPropertiesPath, null);
+
+				// copy原来的到新的文件夹中
+				FileOperate.copyDir(getCompanyName.companysFilePath
+						+ File.separator + "android" + File.separator
+						+ getCompanyInfo.selectedCompanyName,
+						getCompanyName.companysFilePath + File.separator
+								+ "android" + File.separator + companyName);
+				FileOperate.copyDir(getCompanyName.companysFilePath
+						+ File.separator + "IOS" + File.separator
+						+ getCompanyInfo.selectedCompanyName,
+						getCompanyName.companysFilePath + File.separator
+								+ "IOS" + File.separator + companyName);
+				FileOperate.copyDir(getCompanyName.companysFilePath
+						+ File.separator + "PC" + File.separator
+						+ getCompanyInfo.selectedCompanyName,
+						getCompanyName.companysFilePath + File.separator + "PC"
+								+ File.separator + companyName);
+
+				// 删除配置文件中原来的公司
+				PropertiesOperate.removeProperties(
+						getCompanyInfo.selectedCompanyName,
+						getCompanyName.companyPropertiesPath);
+
+				// 删除原来的配置文件夹
+				FileOperate.deleteFiles(getCompanyName.companysFilePath
+						+ File.separator + "android" + File.separator
+						+ getCompanyInfo.selectedCompanyName);
+				FileOperate.deleteFiles(getCompanyName.companysFilePath
+						+ File.separator + "IOS" + File.separator
+						+ getCompanyInfo.selectedCompanyName);
+				FileOperate.deleteFiles(getCompanyName.companysFilePath
+						+ File.separator + "PC" + File.separator
+						+ getCompanyInfo.selectedCompanyName);
+			} else {
+				out.println("错误，文件名已存在！");
+			}
+
+		}
+		if (command.equals("add")) {
+			// 获取公司名
+			String companyName = request.getParameter("companyName");
+			// 如果存在，就返回错误
+			if (PropertiesOperate.getProperties(companyName,
+					getCompanyName.companyPropertiesPath) != null) {
+				out.println("ERROR");
+			} else {
+				out.println(companyName);
+				PropertiesOperate.appendProperties(companyName, command,
+						getCompanyName.companyPropertiesPath, null);
+			}
+		}
+		out.flush();
+		out.close();
+	}
+
+}

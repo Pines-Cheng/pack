@@ -1,0 +1,25 @@
+/**
+ * 
+ */
+package com.pack.define;
+
+/**
+ * @author spider
+ * 
+ */
+public class packConfigDefine {
+
+	public static final String[] ANDROID_IMAGES = { "app_logo_bg.png",
+			"app_logo_bar.png", "app_logo.png", "app_logo_bar_bg.png",
+			"app_logo_s.png", "app_logo_bg_pad.png", "app_logo_bar_pad.png" };
+
+	public static final String[] IOS_IMAGES = { "29pt.png", "40pt.png",
+			"58pt.png", "72pt.png", "76pt.png", "80pt.png", "120pt.png",
+			"152pt.png", "180pt.png", "mycloud_banner.png",
+			"mycloud_welcome.png" };
+
+	public static final String[] PC_IMAGES = { "banner.png", "logo.ico",
+			"logo.png", "main_menu.bmp", "open.bmp", "title.png" };
+
+	public static final String UPDATE_ANDROID_SVN_SHELL_SCRIPT_PATH = "/usr/local/Android/svn/update_android_code.sh";
+}

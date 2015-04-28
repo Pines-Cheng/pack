@@ -1,0 +1,13 @@
+.message-tip {
+display: none;
+padding: 8px 25px;
+border-radius: 3px;
+background: #61C981;
+color: #fff;
+font-size: 12px;
+position: absolute;
+top: 0px;
+left: 50%;
+margin-left: -50px;
+z-index: 5;
+}

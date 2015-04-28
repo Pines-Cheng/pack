@@ -1,0 +1,259 @@
+package com.servlet;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.util.FileOperate;
+import com.util.MyLog;
+import com.util.PropertiesOperate;
+import com.util.ShellOperate;
+
+public class packServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		request.setCharacterEncoding("UTF-8");
+
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("utf-8");
+		PrintWriter out = response.getWriter();
+
+		String command = request.getParameter("command");
+		if (command.equals("pack")) {
+			// out.println("pack");
+			try {
+				MyLog.logger.info("进入pack");
+				pack(request, response, out);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (command.equals("save")) {
+			out.println("save");
+			save(request, response, out);
+		}
+		if (command.equals("delete")) {
+			out.println("delete");
+			delete(request);
+		}
+	}
+
+	/**
+	 * @category 保证
+	 * */
+	private void save(HttpServletRequest request, HttpServletResponse response,
+			PrintWriter out) throws IOException {
+		String androidProjectDestPath = request
+				.getParameter("androidProjectDestPath");
+		String androidPropertiesDestPath = new String(androidProjectDestPath
+				+ "/android.properties");
+		String selectedCompanyName = getSelectedCompanyName(request);
+		// APK
+		String ApkName = getDownloadApkName(androidPropertiesDestPath);
+		// 以公司名建立文件夹
+		String packSaveCompanyPath = new String(getCompanyName.packSaveDir
+				+ File.separator + selectedCompanyName);
+		// 获取源路径
+		String ApkSrcPath = getDownladApkPath(androidProjectDestPath, ApkName);
+
+		// 获取复制目标路径
+		Date date = new Date();
+		String ApkDestPath = new String(packSaveCompanyPath + File.separator
+				+ getCurrentTime() + "_" + ApkName);
+
+		// 目录不存在就创建
+		FileOperate.ifDirNotExistThenCreate(packSaveCompanyPath);
+		FileOperate.ifFileNotExistThenCreate(ApkDestPath);
+
+		// 复制
+		FileOperate.copyDir(ApkSrcPath, ApkDestPath);
+
+		// 复制完后删除临时文件
+		FileOperate.deleteFiles(androidProjectDestPath);
+	}
+
+	/**
+	 * @param request
+	 */
+	private void delete(HttpServletRequest request) {
+		String deleteFilePath = request.getParameter("deleteFilePath");
+		MyLog.logger.info(deleteFilePath);
+		FileOperate.deleteFiles(deleteFilePath);
+	}
+
+	/**
+	 * @throws Exception
+	 * @category 到一个临时文件夹打包
+	 * @throws ServletException
+	 *             if an error occurs
+	 */
+	private void pack(HttpServletRequest request, HttpServletResponse response,
+			PrintWriter out) throws Exception {
+		// 获取需要的路径
+		Date date = new Date();
+		String selectedCompanyName = getSelectedCompanyName(request);
+		// 临时随机文件夹
+		String androidProjectDestPath = new String(
+				getCompanyName.androidTempPackPath + "/" + selectedCompanyName
+						+ "/" + String.valueOf(date.getTime()));
+
+		// 获取配置文件的路径
+		String configPath = new String(getCompanyName.companysFilePath + "/"
+				+ selectedCompanyName + "/config");
+		// 获取android.peroperties的路径
+		String androidPropertiesSrcPath = new String(configPath
+				+ "/android.properties");
+		// 获取config.peroperties的路径
+		String configPropertiesSrcPath = new String(configPath
+				+ "/config.properties");
+		// 获取pic.properties的路径
+		String picPropertiesSrcPath = new String(configPath + "/pic.properties");
+
+		String configPropertiesDestPath = new String(androidProjectDestPath
+				+ "/assets/config.properties");
+
+		String androidPropertiesDestPath = new String(androidProjectDestPath
+				+ "/android.properties");
+		String picPropertiesDestPath = new String(androidProjectDestPath
+				+ "/pic.properties");
+
+		// 校验文件
+		if (FileOperate.isFileExist(configPropertiesSrcPath)
+				&& FileOperate.isFileExist(androidPropertiesSrcPath)
+				&& FileOperate.isFileExist(picPropertiesSrcPath)) {
+
+			MyLog.logger.info("配置文件齐全！");
+
+			// 1.复制文件
+			MyLog.logger.info("复制文件");
+			try {
+
+				FileOperate.copyDir(getCompanyName.androidProjectPath,
+						androidProjectDestPath);
+				FileOperate.copyDir(configPropertiesSrcPath,
+						configPropertiesDestPath);
+				FileOperate.copyDir(androidPropertiesSrcPath,
+						androidPropertiesDestPath);
+				FileOperate
+						.copyDir(picPropertiesSrcPath, picPropertiesDestPath);
+			} catch (Exception e) {
+				MyLog.logger.info("复制文件错误！");
+			}
+
+			// 2.运行脚本
+			// 复制脚本
+			MyLog.logger.info("复制脚本");
+			String shellStringSrcPath = new String(request.getRealPath("/")
+					+ File.separator + "androidPack.sh");
+
+			String shellStringDestPath = new String(androidProjectDestPath
+					+ File.separator + "androidPack.sh");
+			FileOperate.copyDir(shellStringSrcPath, shellStringDestPath);
+
+			String[] shellString = new String[] { "sh",
+					androidProjectDestPath + File.separator + "androidPack.sh",
+					androidProjectDestPath };
+
+			// 脚本执行日志的URL
+			MyLog.logger.info("脚本执行日志的URL");
+			String shellOperateLogURL = new String("/pack/temp"
+					+ File.separator + selectedCompanyName + File.separator
+					+ androidProjectDestPath.split("/")[6] + File.separator
+					+ "shellOperateLog");
+			// apk包名
+			String downloadApkName = getDownloadApkName(androidPropertiesDestPath);
+
+			String downloadFileURL = getDownladApkPath(androidProjectDestPath,
+					downloadApkName);
+
+			// 3.转为jsonString，返回
+			MyLog.logger.info("jsonString 初始化！");
+			JSONObject js = new JSONObject();
+			js.put("shellOperateLogURL", shellOperateLogURL);
+			js.put("downloadFileURL", downloadFileURL);
+			js.put("androidProjectDestPath", androidProjectDestPath);
+			String jsonString = JSON.toJSONString(js);
+			jsonString = "callback(" + jsonString + ");";
+			MyLog.logger.info(jsonString);
+			out.println(jsonString);
+
+			// File file = new File(shellOperateLogPath);
+			response.flushBuffer();
+
+			out.close();
+			MyLog.logger.info("sh " + androidProjectDestPath + File.separator
+					+ "androidPack.sh" + androidProjectDestPath);
+
+			ShellOperate.shellOperate(shellString);
+
+		} else {
+			JSONObject js = new JSONObject();
+
+			js.put("result", "ERROR");
+			String jsonString = JSON.toJSONString(js);
+			jsonString = "callback(" + jsonString + ");";
+			MyLog.logger.info(jsonString);
+			out.println(jsonString);
+			response.flushBuffer();
+			out.close();
+		}
+
+		// 3.
+	}
+
+	/**
+	 * @param androidProjectDestPath
+	 * @param downloadApkName
+	 * @return
+	 */
+	private String getDownladApkPath(String androidProjectDestPath,
+			String downloadApkName) {
+		String downloadFileURL = new String(androidProjectDestPath
+				+ File.separator + "bin" + File.separator + downloadApkName);
+		return downloadFileURL;
+	}
+
+	private String getSelectedCompanyName(HttpServletRequest request) {
+		String selectedCompanyName = request.getSession()
+				.getAttribute("selectedCompanyName").toString();
+		return selectedCompanyName;
+	}
+
+	private String getDownloadApkName(String androidPropertiesDestPath)
+			throws IOException {
+		String downloadApkName = new String(PropertiesOperate.getProperties(
+				"publishApkName", androidPropertiesDestPath)
+				+ "_V"
+				+ PropertiesOperate.getProperties("versionName",
+						androidPropertiesDestPath) + ".apk");
+		return downloadApkName;
+	}
+
+	/**
+	 * 
+	 */
+	private String getCurrentTime() {
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+		String currentTime = sdf.format(d);
+		return currentTime;
+	}
+}

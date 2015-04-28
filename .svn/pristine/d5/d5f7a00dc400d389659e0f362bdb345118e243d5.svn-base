@@ -1,0 +1,85 @@
+package com.util.file;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+
+import com.util.FileOperate;
+
+public class FileOperateInput extends FileOperate {
+
+	private FileOutputStream fos;
+	private Writer out;
+
+	public FileOperateInput(String congfigFilePath) {
+		super(congfigFilePath);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ���ļ���ֱ��׷���ַ�
+	 */
+	public void openFileInputAppend(String string) throws IOException {
+		this.openFileInput();
+		this.writeString(string);
+		this.closeFileInput();
+
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ���ļ���ֱ��׷���ַ�
+	 */
+	public void openFileInputOver(String string) throws IOException {
+		this.openFileInputOverWrite();
+		this.writeString(string);
+		this.closeFileInput();
+
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ���ļ����ַ�д
+	 */
+	public void openFileInput() throws FileNotFoundException,
+			UnsupportedEncodingException {
+
+		fos = new FileOutputStream(super.getConfigFilePath(), true);
+		out = new OutputStreamWriter(fos, "utf-8");
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ���ļ����ַ�д
+	 */
+	public void openFileInputOverWrite() throws FileNotFoundException,
+			UnsupportedEncodingException {
+
+		fos = new FileOutputStream(super.getConfigFilePath(), false);
+		out = new OutputStreamWriter(fos, "utf-8");
+	}
+
+	/**
+	 * @throws IOException
+	 * @category �ر��ļ����ַ�д
+	 */
+	public void closeFileInput() throws IOException {
+		out.close();
+		fos.close();
+	}
+
+	/**
+	 * @throws IOException
+	 * @category ���Ѿ���д���ļ���׷���ַ�
+	 */
+	public void writeString(String string) throws IOException {
+
+		// д�ַ�
+		out.append(string);
+		System.out.println("����д��ʱ���룺" + string);
+	}
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>阿里云管理</title>
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+	<link rel="stylesheet" type="text/css"
+	href="css/bootstrap-theme.min.css">
+
+	<!-- validation Engine -->
+	<link rel="stylesheet" href="css/validationEngine.jquery.css" type="text/css"/>
+
+	<!--我自己的CSS样式-->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/message.css"></head>
+
+</head>
+<body class="container" style="overflow:auto !important" >
+	<div class="row">
+		<div class="tabbable" id="tabs-561689">
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a href="#panel-924661" data-toggle="tab" contenteditable="false">测试</a>
+				</li>
+				<li class="">
+					<a href="#panel-156244" data-toggle="tab" contenteditable="false">xserver</a>
+				</li>
+			</ul>
+			<div class="tab-content ">
+			<div id="wait"></div>
+				<div class="tab-pane active" id="panel-924661" contenteditable="false">
+					<table class="table table-hover table-striped" contenteditable="false">
+						<thead>
+							<tr>
+								<th width="80%">公司名</th>
+								<th style="text-align:center"   colspan="2" ></th>
+							</tr>
+						</thead >
+						<tbody id="aliyunTestTable">
+							<!-- 显示的内容 -->
+						</tbody>
+					</table>
+
+				</div>
+				<div class="tab-pane " id="panel-156244" contenteditable="false">
+					<table class="table table-hover table-striped" contenteditable="false">
+						<thead>
+							<tr>
+								<th width="80%">公司名</th>
+								<th ></th>
+							</tr>
+						</thead>
+						<tbody id="aliyunXserverTable">
+							<!-- 显示的内容 -->
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+	<script type="text/javascript" src="js/jquery-1.11.2.js"></script>
+
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+	<!-- Add mousewheel plugin (this is optional)  图片预览   -->
+	<script type="text/javascript" src="./fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+
+	<script type="text/javascript" src="./fancybox/source/jquery.fancybox.js"></script>
+	<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-buttons.js"></script>
+	<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-media.js"></script>
+	<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-thumbs.js"></script>
+
+	<!-- 文件上传 -->
+	<script type="text/javascript" src="js/webuploader.js"></script>
+
+	<script type="text/javascript" src="js/spin.js"></script>
+
+	<!-- Validation Engine -->
+	<script src="js/jquery.validationEngine-zh_CN.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery.validationEngine.js" type="text/javascript" charset="utf-8"></script>
+
+	<!-- 我的 JavaScript 文件 -->
+	<script type="text/javascript" src="js/event.js"></script>
+	<script type="text/javascript" src="js/page.js"></script>
+	<script type="text/javascript" src="js/config.js"></script>
+	<script type="text/javascript" src="js/aliyunManage.js"></script>
+
+</html>

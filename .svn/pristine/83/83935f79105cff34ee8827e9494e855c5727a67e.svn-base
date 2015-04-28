@@ -1,0 +1,158 @@
+package com.servlet;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.util.FileOperate;
+import com.util.PropertiesOperate;
+
+public class configSaveServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+
+		String platform = request.getParameter("platform");
+		if ((platform != null)) {
+			if (platform.equals("android")) {
+				androidConfigSave(request, out);
+			}
+			if (platform.equals("IOS")) {
+				IOSConfigSave(request, out);
+			}
+			if (platform.equals("PC")) {
+				androidConfigSave(request, out);
+			}
+		}
+
+		// out.println("configSaveServlet");
+		out.flush();
+		out.close();
+
+	}
+
+	/**
+	 * @param request
+	 * @param out
+	 * @throws IOException
+	 */
+	private void androidConfigSave(HttpServletRequest request, PrintWriter out)
+			throws IOException {
+		String localDir = new String(getCompanyName.tomcatCompanysFilePath
+				+ File.separator + "android" + File.separator
+				+ getCompanyInfo.selectedCompanyName + "/Images");
+
+		// 获取配置文件的路径
+		String configPath = new String(getCompanyName.companysFilePath
+				+ File.separator + "android" + File.separator
+				+ getCompanyInfo.selectedCompanyName + "/config");
+		// 获取android.peroperties的路径
+		String androidPropertiesPath = new String(configPath + File.separator
+				+ "android.properties");
+		// 获取config.peroperties的路径
+		String configPropertiesPath = new String(configPath + File.separator
+				+ "config.properties");
+
+		// 将两个配置文件都清空
+		FileOperate.clearFile(androidPropertiesPath);
+		FileOperate.clearFile(configPropertiesPath);
+
+		// 获取request参数
+		try {
+			Enumeration<String> enm = request.getParameterNames();
+			while (enm.hasMoreElements()) {
+				String name = enm.nextElement();
+				if (name.equals("callback") || name.equals("_")) {
+					continue;
+				}
+				if (name.equals("defaultset") || name.equals("serverip")
+						|| name.equals("serverport")) {
+					PropertiesOperate.appendProperties(name,
+							request.getParameter(name), configPropertiesPath,
+							null);
+				} else {
+					PropertiesOperate.appendProperties(name,
+							request.getParameter(name), androidPropertiesPath,
+							null);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			out.println("error");
+		}
+		out.println("success");
+	}
+
+	/**
+	 * @param request
+	 * @param out
+	 * @throws IOException
+	 */
+	private void IOSConfigSave(HttpServletRequest request, PrintWriter out)
+			throws IOException {
+		String localDir = new String(getCompanyName.tomcatCompanysFilePath
+				+ File.separator + "IOS" + File.separator
+				+ getCompanyInfo.selectedCompanyName + "/Images");
+
+		// 获取配置文件的路径
+		String configPath = new String(getCompanyName.companysFilePath
+				+ File.separator + "IOS" + File.separator
+				+ getCompanyInfo.selectedCompanyName + "/config");
+		// 获取Iconfig.cfg的路径
+		String IOSConfigFilePath = new String(configPath + File.separator
+				+ "config.cfg");
+
+		// 将配置文件都清空
+		FileOperate.clearFile(IOSConfigFilePath);
+
+		// 获取request参数
+		try {
+
+			// 额外的配置信息，包括图片目录和其他信息
+
+			PropertiesOperate.appendProperties("identifier",
+					"com.sucun.SuCunCloud", IOSConfigFilePath, null);
+
+			Enumeration<String> enm = request.getParameterNames();
+			while (enm.hasMoreElements()) {
+				String name = enm.nextElement();
+				if (name.equals("callback") || name.equals("_")
+						|| name.equals("platform")) {
+					continue;
+				} else if (name.equals("defaultset") || name.equals("serverIp")
+						|| name.equals("serverPort") || name.equals("name")
+						|| name.equals("version")) {
+
+					if (name.equals("name")) {
+						FileOperate.appendLine(name,
+								request.getParameter(name), IOSConfigFilePath);
+					} else {
+						PropertiesOperate.appendProperties(name,
+								request.getParameter(name), IOSConfigFilePath,
+								null);
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			out.println("error");
+		}
+		out.println("success");
+	}
+
+}

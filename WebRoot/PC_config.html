@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>PC配置文件修改</title>
+
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+	<link rel="stylesheet" type="text/css"
+	href="css/bootstrap-theme.min.css">
+
+	<!-- Add fancyBox -->
+	<link rel="stylesheet" href="./fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
+
+	<!-- Optionally add helpers - button, thumbnail and/or media -->
+	<link rel="stylesheet" href="./fancybox/source/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen" />
+
+	<link rel="stylesheet" href="./fancybox/source/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen" />
+
+	<!-- validation Engine -->
+	<link rel="stylesheet" href="css/validationEngine.jquery.css" type="text/css"/>
+
+	<!--我自己的CSS样式-->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/message.css"></head>
+	<link rel="stylesheet" type="text/css" href="css/webuploader.css"></head>
+
+<body style="overflow:scroll !important">
+	<br>
+	<div class="container">
+		<div class="panel panel-primary" align="center">
+			<div class="panel-heading">PC端配置文件编辑</div>
+			<div class="panel-body">
+				<div style="margin-bottom:5px">
+					<h5 class="label label-primary">PC端LOGO</h5>
+				</div>
+				<div class="panel panel-default">
+					<!-- PC端的logo显示 -->
+					<div class="panel-body"  style="height:200px" id="PC_logo"></div>
+				</div>
+				<table>
+					<tr>
+						<th    class="col-sm-12" text-align="left">
+							<button  type="button"  class="btn btn-danger  btn-default" id="deleteImages"  >删除全部logo</button>
+						</th>
+						<th     class="col-sm-12"  text-align="right">
+							<div   id="filePicker" class="btn btn-info  btn-default" >批量上传logo</div>
+						</th>
+					</tr>
+
+				</table>
+
+				<div style="margin-bottom:5px">
+					<h5 class="label label-primary">PC端配置文件</h5>
+				</div>
+
+				<div class="panel panel-default">
+					<h5 id="PCCondigTips" style="color:red"></h5>
+					<div class="panel-heading">Custom常用配制</div>
+					<!-- IOS端的配置文件显示 -->
+					<div class="panel-body" 
+						id="frame_PC_config_file">
+
+						<form class="form-horizontal" role="form" align="left" id="customForm">
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label">公司名：</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control input-sm" placeholder="如：中科云华网盘" name="PRODUCT_NAME"></div>
+								<div class="col-sm-3" style="color:red"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label">快捷方式名：</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control input-sm" placeholder="如：中科云华网盘" name="SHORTCUT_NAME"></div>
+								<div class="col-sm-3" style="color:red"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label">发布公司：</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control input-sm" placeholder="如：北京中科云华科技股份有限公司" name="PRODUCT_PUBLISHER"></div>
+								<div class="col-sm-3" style="color:red"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >默认服务器IP：</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control input-sm" placeholder="如：pan.cloudhua.com" name="DEFAULT_SERVER"></div>
+								<div class="col-sm-3" style="color:red"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >默认服务器端口：</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control input-sm" placeholder="如：8080" name="DEFAULT_PORT"></div>
+								<div class="col-sm-3" style="color:red"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >备用服务器IP：</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control input-sm" placeholder="如：pan.cloudhua.com" name="SPARE_HOST"></div>
+								<div class="col-sm-3" style="color:red"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >备用服务器端口：</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control input-sm" placeholder="如：8080" name="SPARE_PORT"></div>
+								<div class="col-sm-3" style="color:red"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >代理服务器IP：</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control input-sm" placeholder="如：127.0.0.1" name="ProxyIP"></div>
+								<div class="col-sm-3" style="color:red"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >代理服务器端口：</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control input-sm" placeholder="如：8080" name="ProxyPort"></div>
+								<div class="col-sm-3" style="color:red"></div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >皮肤颜色：</label>
+								<div class="col-sm-3">
+									<select class="form-control" name="SKIN_COLOR" >
+										<option value="green">green</option>
+										<option value="blue">blue</option>
+										<option value="red">red</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >服务器代理：</label>
+								<div class="col-sm-3">
+									<select class="form-control" name="ProxyStyle" >
+										<option value="不使用代理">不使用代理</option>
+										<option value="sock4">sock4</option>
+
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+						</form>
+
+					</div>
+
+				</div>
+
+				<div class="panel panel-default" >
+					<div class="panel-heading" id="settingPanelHead">Setting 默认配置</div>
+					<div class="panel-body" id="settingPanel" >
+
+						<form class="form-horizontal" role="form" align="left" id="settingForm">
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >保存密码：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="SavePassword" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >开机重启：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="AutoRun" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >自动登录：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="AutoLogin" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >登录后自动打开网盘：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="AutoOpen" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >自动检测更新：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="AutoUpdate" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用自留主机：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="IsUseSpare" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >打开云桥：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Bridge" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >一键获取日志：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="OneKeyGetLog" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >关于：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="About" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >本地打开：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="LocalOpen" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >访问网站：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="VisitWeb" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用分享管理：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="ShareManagement" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用锁定管理：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="LockManagement" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >进入回收站：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="GotoRecycle" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用外链：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Link" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >加锁：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="MenuLock" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用邮件发送：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="MailTo" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >登陆后展开云桥：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="BridgeVisit" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >强制升级：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="MustUpdate" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用文件上传功能开关：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Upload" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用向导开关：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Guide" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用第一次登陆：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="FirstLogin" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用右键打开文件下载功能：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Download" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >支持中文账号：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="UseChAccount" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >固定盘符，登录时不可修改：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="FixedDrive" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用dokan驱动：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="UseDokanDrive" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用cbfs驱动：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="UseCbfsDrive" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >检查网络：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="CheckNetWork" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >固定IP、端口：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="FixedHost" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >使用outlook插件：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="UseOutLook" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >是都标记扫描过缓存文件：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Tag" >
+										<option value="true">true</option>
+										<option value="false" selected>false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >历史版本开关：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="HistoryEnable" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >历史版本下载：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="HistoryDownload" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >历史版本恢复：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Restore" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >历史版本比较：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="compare" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >右键开关：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="MenuEnable" >
+										<option value="true" selected>true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >shell开关：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="ShellEnable" >
+										<option value="true" >true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >图标叠加开关：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="OverlayEnable" >
+										<option value="true" >true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >锁：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Lock" >
+										<option value="true" >true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >用户：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Admin" >
+										<option value="true" >true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >写：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="Write" >
+										<option value="true" >true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >读：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="read" >
+										<option value="true" >true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label" >列表：</label>
+								<div class="col-sm-3" >
+									<select class="form-control" name="List" >
+										<option value="true" >true</option>
+										<option value="false">false</option>
+									</select>
+									<div class="col-sm-4" style="color:red"></div>
+									<div class="col-sm-3" style="color:red"></div>
+								</div>
+							</div>
+
+						</form>
+
+					</div>
+
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10" align="right">
+						<button  type="button" class="btn btn-info" id="PCConfigSubmit">保存配置</button>
+					</div>
+				</div>
+</body>
+
+				<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+				<script type="text/javascript" src="js/jquery-1.11.2.js"></script>
+
+				<script type="text/javascript" src="js/page.js"></script>
+
+				<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+				<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+				<!-- Add mousewheel plugin (this is optional)  图片预览   -->
+				<script type="text/javascript" src="./fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+
+				<script type="text/javascript" src="./fancybox/source/jquery.fancybox.js"></script>
+				<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-buttons.js"></script>
+				<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-media.js"></script>
+				<script type="text/javascript" src="./fancybox/source/helpers/jquery.fancybox-thumbs.js"></script>
+
+				<!-- Validation Engine -->
+				<script src="js/jquery.validationEngine-zh_CN.js" type="text/javascript" charset="utf-8"></script>
+				<script src="js/jquery.validationEngine.js" type="text/javascript" charset="utf-8"></script>
+
+				<!-- 文件上传 -->
+				<script type="text/javascript" src="js/webuploader.js"></script>
+				<script type="text/javascript" src="js/config.js"></script>
+
+				<script type="text/javascript" src="js/page.js"></script>
+
+				<script type="text/javascript" src="js/PC_config.js"></script>
+
+			</html>

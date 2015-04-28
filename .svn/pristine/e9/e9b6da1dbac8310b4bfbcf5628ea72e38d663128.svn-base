@@ -1,0 +1,27 @@
+package com.util;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ShellOperate {
+
+	public static void shellOperate(String shellString) throws IOException {
+		Process process = null;
+		List<String> processList = new ArrayList<String>();
+		// ִ�нű�
+		process = Runtime.getRuntime().exec(shellString);
+		// ��ȡ�ű������
+		BufferedReader input = new BufferedReader(new InputStreamReader(
+				process.getInputStream()));
+		String line = "";
+		while ((line = input.readLine()) != null) {
+			processList.add(line + "\r\n");
+			// out.println(line + "<br>");
+		}
+		input.close();
+
+	}
+}

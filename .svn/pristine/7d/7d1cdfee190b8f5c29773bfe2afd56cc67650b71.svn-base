@@ -1,0 +1,203 @@
+/* CSS Document */
+
+.layout-top {
+	width: 100%;
+	height: 60px;
+	position: relative;
+	z-index: 5;
+	background-color: #337AB7;
+}
+
+.nav-logo {
+	float: left;
+	margin-left: 30px;
+	margin-top: 10px;
+}
+
+html, body, h1, h2, h3, h4, h5, h6, dl, dt, dd, ul, ol, li, p, blockquote, pre, hr, figure, table, caption, th, td, form, fieldset, legend, input, button, textarea, menu {
+margin: 0;
+padding: 0;
+}
+
+.u-title {
+	width: 100%;
+	height: auto;
+	font-size: 36px;
+	line-height: normal;
+	color: #FDFDFD;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: center;
+	font-style: normal;
+	font-family: "幼圆";
+	font-weight: bold;
+	padding-top: 10px;
+
+}
+
+/*帮助文档的超链接*/
+.u-help {
+	width: 50px;
+	height: 20px;
+	font-size: 14px;
+	line-height: 20px;
+	color: #FDFDFD;
+	margin-right: 20px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: right;
+	float: right;
+	padding-top: 20px;
+}
+
+/*帮助文档的超链接*/
+.u-log {
+	width: 30px;
+	height: 20px;
+	font-size: 14px;
+	line-height: 20px;
+	color: #EBF0F7;
+	margin-right: 0px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: center;
+	float: right;
+	padding-top: 20px;
+}
+
+.u-log>a{
+	color: #EBF0F7;
+	text-decoration: none;
+	font-family: "微软雅黑";
+	font-weight: normal;
+	
+}
+
+/*必须是help的子选择器，才能生效*/
+.u-help>a{
+	color: #FFF;
+	text-decoration: none;
+	font-family: "微软雅黑";
+	font-weight: normal;
+	
+}
+
+.layout-left {
+	width: 200px;
+	float: left;
+	border-right: 1px solid #E0E0E0;
+	overflow-y: auto;
+	background: #EBF0F7;
+	height: 600px;
+	margin-top: 5px;
+	overflow:hidden;
+}
+
+.layout_mid{
+	width: 200px;
+	float: left;
+	border-right: 1px solid #E0E0E0;
+	overflow-y: auto;
+	background: #EBF0F7;
+	height: 600px;
+	margin-top: 5px;
+	margin-left:5px;
+	margin-right:5px;
+	overflow:hidden;
+	
+}
+
+.layout-up{
+	width: auto;
+	float: left;
+	border-right: 1px solid #E0E0E0;
+	
+	background: #EBF0F7;
+	height: 280px;
+	margin-top: 5px;
+	margin-left:5px;
+	margin-right:5px;
+	overflow:hidden;
+	}
+
+/*主界面的样式*/
+.layout_main{
+	width: 600px;
+	float: left;
+	border-right: 1px solid #E0E0E0;
+	overflow-y: auto;
+	background: #EBF0F7;
+	height: 600px;
+	margin-top: 5px;
+	margin-left:5px;
+	overflow:scroll;
+	}
+
+.config_container{
+	margin:10px 10px 10px 10px;
+}
+	
+.layout-top .u-title span {
+	color: #CCCCCC;
+	font-family: "微软雅黑";
+	font-weight: normal;
+}
+.layout-top .u-title .u-help a:hover {
+	color: #FFF;
+	text-decoration: underline;
+}
+.layout-top .u-title .u-log a:hover {
+	color: #FFF;
+	text-decoration: underline;
+}
+
+/* 公司名的按钮样式 */
+#company_button>label>div{
+	width: 90px;
+	height:25px;
+	font-family: "微软雅黑";
+	font-size: 14px;
+	text-align: center;
+	color: white;
+	background-color: #337AB7;
+	border-radius:5px;
+	padding: 2px;
+}
+
+#company_name_select{
+	font-size: 20px;
+	text-align: center;
+	color: red;
+	font-weight: bold; 
+	}
+
+#images{
+	position: relative;
+	width:140px;
+	height: 150px;
+	margin:10px 10px 10px 10px;
+	float: left;
+	overflow: hidden;
+	text-align: center;
+}
+#images>div>a>img{
+	max-width:140px;
+	max-height: 120px;
+	margin:0 auto;
+}
+#images>div:first-child{
+	 position:absolute;
+	 bottom:20px;
+}
+#images>div:last-child{
+	 position:absolute;
+	 bottom:0px;
+}
+
+#android_logo{
+	max-height: 300px;
+	overflow-y: scroll;
+}
+
+
+

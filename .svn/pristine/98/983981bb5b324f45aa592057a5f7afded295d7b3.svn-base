@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+
+	<title>新格投资首届外汇英才挑战赛</title>
+
+</head>
+
+<body>
+
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span12"></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span12">
+				<div class="hero-unit">
+					<h1>新格投资首届外汇英才挑战赛</h1>
+					<br/>
+
+					<p>
+						<span style="font-size:1.4em">
+							&nbsp;&nbsp;&nbsp;&nbsp;16万奖金说拿就拿？货币战争说打就打？觉得模拟盘不过瘾？觉得身为财经类学子，却不懂真正的资本市场？新格投资再挑靠谱赞助商汇盈资本，搭建专用外汇交易大赛。清华大学，北京大学西南财经大学纷纷参与，群校聚集，谁才是最牛的投资达人？哪所学校培养出了真正适应国际市场的财经学子？我们为母校而战，我们为荣誉而战，拭目以待。
+						</span>
+					</p>
+					<br/>
+					<p>
+						<a class="btn btn-primary btn-large" href="#">查看更多 »</a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="row-fluid" >
+			<div class="span12" align="center">
+
+				<a href="main.html" >
+					<button class="btn btn-block btn-large btn-warning" type="button">我要参赛</button>
+				</a>
+			</div>
+
+			
+		</div>
+		<br/>
+
+		<div class="row-fluid" >
+			
+
+			<div class="span12" align="center">
+				<a href="#">
+					<button class="btn btn-block btn-large btn-info" type="button">关注我们</button>
+				</a>
+			</div>
+		</div>
+
+	</div>
+
+</body>
+
+</html>

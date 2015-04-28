@@ -1,0 +1,67 @@
+package com.servlet;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.util.MyLog;
+
+/**
+ * 下载的servlet，传入文件绝对路径，下载文件
+ * 
+ * @author spider
+ * 
+ */
+public class downloadServlet extends HttpServlet {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		this.doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+
+		String downloadFileName = request.getParameter("filePath");
+		MyLog.logger.info("下载文件：" + downloadFileName);
+
+		ServletOutputStream out = response.getOutputStream();
+
+		File f = new File(downloadFileName);
+		if (f.exists()) {
+			FileInputStream fis = new FileInputStream(f);
+			String filename = URLEncoder.encode(f.getName(), "utf-8"); // 防止文件名中文乱码
+			byte[] b = new byte[fis.available()];
+			fis.read(b);
+			response.setCharacterEncoding("utf-8");
+			response.setHeader("Content-Disposition", "attachment; filename="
+					+ filename + "");
+
+			out.write(b);
+			out.flush();
+			out.close();
+		} else {
+			out.println("file not exist!");
+			out.flush();
+			out.close();
+			MyLog.logger.info("file not exist!");
+		}
+	}
+}

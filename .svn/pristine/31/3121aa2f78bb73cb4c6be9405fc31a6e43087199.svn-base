@@ -1,0 +1,140 @@
+package com.servlet;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.util.FileOperate;
+import com.util.MyLog;
+import com.util.PropertiesOperate;
+import com.util.ServletUtil;
+
+public class getCompanyInfo extends HttpServlet {
+	// 公司配置文件名
+	static String companyPropertiesPath;
+	static String companysFilePath;
+	static String tomcatCompanysFilePath;
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		request.setCharacterEncoding("UTF-8");
+
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("utf-8");
+		PrintWriter out = response.getWriter();
+
+		// 解析http参数表
+		ServletUtil.praseParaments(request);
+
+		// 验证选中公司的目录信息，不存在就创建并copy过来，存在就直接copy到pack目录下
+		String selectCompanyName = initcompany(request);
+
+		// 创建json对象
+		JSONObject js = new JSONObject();
+		HashMap<String, String> companyImagesInfo = new HashMap<String, String>();
+		Map<String, String> companyConfigInfo = new HashMap<String, String>();
+
+		// 获取图片目录下所有文件
+		File tomcatCompanyImageFile = new File(tomcatCompanysFilePath + "/"
+				+ selectCompanyName + "/" + "Images");
+		String[] imagesStrings = tomcatCompanyImageFile.list();
+
+		// 判断图片文件夹是否为空，不为空就遍历，且返回图片的链接json字符串
+		if (imagesStrings == null) {
+			MyLog.logger.info("image文件夹为空！");
+
+		} else {
+			MyLog.logger.info("image文件夹不为空！");
+			// 使用图片名和路径初始化map对象
+			for (int i = 0; i < imagesStrings.length; i++) {
+				MyLog.logger.info(imagesStrings[i] + ":" + "/pack/pack/"
+						+ selectCompanyName + imagesStrings[i]);
+				companyImagesInfo.put(imagesStrings[i], "/pack/pack/"
+						+ selectCompanyName + "/Images/" + imagesStrings[i]);
+
+			}
+		}
+		// 获取配置文件路径
+		String tomcatCompanyconfigPath = new String(tomcatCompanysFilePath
+				+ "/" + selectCompanyName + "/config/config.properties");
+
+		// 获取配置文件信息,添加到map
+		companyConfigInfo = PropertiesOperate
+				.getAllProperties(tomcatCompanyconfigPath);
+
+		// 2.添加image对象，
+		js.put("companyImagesInfo", companyImagesInfo);
+		js.put("companyConfigInfo", companyConfigInfo);
+		// 转为jsonString
+		String jsonString = JSON.toJSONString(js);
+		jsonString = "callback(" + jsonString + ");";
+		MyLog.logger.info(jsonString);
+		out.println(jsonString);
+	}
+
+	/**
+	 * @throws IOException
+	 * @category 初始化servlet
+	 */
+	public void init(ServletConfig config) {
+
+		// 获取公司名的配置文件??只可以在init里面做吗？？？
+		companyPropertiesPath = config.getServletContext().getInitParameter(
+				"companyName");
+		System.out.println(companyPropertiesPath);
+		MyLog.logger.info(companyPropertiesPath);
+		// 获取公司文件信息的文件夹路径
+		companysFilePath = config.getServletContext().getInitParameter(
+				"companysFilePath");
+		MyLog.logger.info(companysFilePath);
+		// 获取tomcat下pack文件夹路径
+		tomcatCompanysFilePath = config.getServletContext().getInitParameter(
+				"tomcatCompanysFilePath");
+
+	}
+
+	private String initcompany(HttpServletRequest request) throws IOException {
+		// 打印出请求的公司名
+		String selectCompanyName = request.getParameter("selectedCompany");
+		MyLog.logger.info("你选择了：" + selectCompanyName + "公司！");
+
+		// 检查公司的文件目录树，不存在则创建
+		FileOperate.initCompanyFileTree(companysFilePath, selectCompanyName);
+
+		// 如果tomcat的pack目录下存在选中的公司文件名，则删除，然后再复制过来
+		File selectCompanyNameFile = new File(tomcatCompanysFilePath + "/"
+				+ selectCompanyName);
+		if (selectCompanyNameFile.exists()) {
+			FileOperate.deleteFiles(tomcatCompanysFilePath + "/"
+					+ selectCompanyName);
+			selectCompanyNameFile.mkdir();
+			FileOperate.copyDir(companysFilePath + "/" + selectCompanyName,
+					tomcatCompanysFilePath + "/" + selectCompanyName);
+			MyLog.logger.info("复制到" + tomcatCompanysFilePath + "/"
+					+ selectCompanyName);
+		} else {
+			selectCompanyNameFile.mkdir();
+			FileOperate.copyDir(companysFilePath + "/" + selectCompanyName,
+					tomcatCompanysFilePath + "/" + selectCompanyName);
+			MyLog.logger.info("复制到" + tomcatCompanysFilePath + "/"
+					+ selectCompanyName);
+		}
+		return selectCompanyName;
+	}
+}

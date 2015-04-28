@@ -1,0 +1,113 @@
+package com.servlet;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.util.FileOperate;
+import com.util.PropertiesOperate;
+
+public class companyNameOperateServlet extends HttpServlet {
+
+	// 公司配置文件名
+	static String companysFilePath;
+	static String companyPropertiesPath;
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		response.setContentType("text/html");
+		request.setCharacterEncoding("UTF-8");
+
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("utf-8");
+
+		String command = request.getParameter("command");
+		if (command.equals("delete")) {
+			// 获取公司名
+			String selectedCompanyName = request
+					.getParameter("selectedCompanyName");
+			// 删除properties文件中的公司名
+			PropertiesOperate.removeProperties(selectedCompanyName,
+					companyPropertiesPath);
+			// 删除/usr/local/pack目录下的公司配置信息
+			FileOperate.deleteFiles(companysFilePath + File.separator
+					+ selectedCompanyName);
+			delete(request, response);
+			out.println("success");
+
+		}
+		if (command.equals("edit")) {
+			String companyName = request.getParameter("companyName");
+			String selectedCompanyName = request.getSession()
+					.getAttribute("selectedCompanyName").toString();
+
+			if (PropertiesOperate.getProperties(companyName,
+					companyPropertiesPath) == null) {
+
+				// 添加到配置文件中
+				PropertiesOperate.appendProperties(companyName, companyName,
+						companyPropertiesPath, null);
+				String oldCompanyPath = new String(companysFilePath
+						+ File.separator + selectedCompanyName);
+				String newCompanyPath = new String(companysFilePath
+						+ File.separator + companyName);
+				// copy原来的到新的文件夹中
+				FileOperate.copyDir(oldCompanyPath, newCompanyPath);
+				// 删除配置文件中原来的公司
+				PropertiesOperate.removeProperties(selectedCompanyName,
+						companyPropertiesPath);
+				// 删除原来的配置文件夹
+				FileOperate.deleteFiles(oldCompanyPath);
+			} else {
+				out.println("错误，文件名已存在！");
+			}
+
+		}
+		if (command.equals("add")) {
+			// 获取公司名
+			String companyName = request.getParameter("companyName");
+			out.println(companyName);
+			PropertiesOperate.appendProperties(companyName, command,
+					companyPropertiesPath, null);
+		}
+		;
+		out.flush();
+		out.close();
+	}
+
+	/**
+	 * Initialization of the servlet. <br>
+	 * 
+	 * @throws ServletException
+	 *             if an error occurs
+	 */
+	public void init(ServletConfig config) throws ServletException {
+
+		// 获取公司文件信息的文件夹路径
+		companysFilePath = config.getServletContext().getInitParameter(
+				"companysFilePath");
+		// 获取公司文件信息的文件夹路径
+		companyPropertiesPath = config.getServletContext().getInitParameter(
+				"companyName");
+
+	}
+
+	private void delete(HttpServletRequest request, HttpServletResponse response) {
+
+	}
+
+}

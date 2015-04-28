@@ -1,0 +1,182 @@
+package com.servlet;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+import com.util.FileOperate;
+import com.util.MyLog;
+
+public class uploaderServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+
+		// 初始化路径
+		String selectedCompanyName = request.getSession()
+				.getAttribute("selectedCompanyName").toString();
+		MyLog.logger.info("从session里面获取的selectedCompanyName为："
+				+ selectedCompanyName);
+
+		String basePath = request.getRealPath("");
+		String dir = new String(basePath + "/pack/" + selectedCompanyName
+				+ "/Images");
+
+		try {
+			// 保存上传的文件。
+			String result = fileUploaderOperate(request,
+					getCompanyName.companysFilePath);
+			out.println(result);
+			MyLog.logger.info("上传文件成功！");
+
+		} catch (Exception e) {
+
+			// out.println("");
+			e.printStackTrace();
+			// out.println("error");
+			MyLog.logger.info("文件上传失败！");
+		}
+
+		out.flush();
+		out.close();
+	}
+
+	/**
+	 * @throws Exception
+	 * @category 接收文件，并保存
+	 */
+	public static String fileUploaderOperate(HttpServletRequest request,
+			String companysFilePath) throws Exception {
+
+		String result = new String("success");
+		String selectedCompanyName = request.getSession()
+				.getAttribute("selectedCompanyName").toString();
+
+		ServletFileUpload upload = initUploader(request);
+
+		// 从request得到上传的文件列表,并获得其迭代器
+		// Parse the request to get file items.
+		List<FileItem> fileItems;
+
+		fileItems = upload.parseRequest(request);
+
+		// Process the uploaded file items
+		Iterator<FileItem> i = fileItems.iterator();
+
+		// 处理文件：写入或者其他操作
+		String fileName;
+		while (i.hasNext()) {
+			FileItem fi = (FileItem) i.next();
+			if (fi.isFormField()) {// 当是表单域时，进行的处理
+
+				// Get the uploaded file parameters
+				String fieldName = fi.getFieldName();// 得到元素的name属性的值
+				String fieldValue = fi.getString("utf-8");// 得到元素的value的值
+				fileName = fi.getName();// 这里是表单域，所以得到的是null
+
+			} else {// 当是文件域时，将文件保存到硬盘中
+
+				String basePath = request.getRealPath("");
+
+				MyLog.logger.info(basePath);
+				String contentType = fi.getContentType();
+				boolean isInMemory = fi.isInMemory();
+				long sizeInBytes = fi.getSize();
+				String fieldName = fi.getFieldName();// 得到元素的name属
+				fileName = fi.getName();// 取得上传的文件名
+
+				// 校验文件名
+				if (fileName.equals("app_logo.png")
+						|| fileName.equals("app_logo_bar.png")
+						|| fileName.equals("app_logo_bar_bg.png")
+						|| fileName.equals("app_logo_bg.png")
+						|| fileName.equals("app_logo_s.png")) {
+
+				} else {
+					result = "ERROR1";
+					continue;
+				}
+
+				MyLog.logger.info(contentType + "  " + isInMemory + "  "
+						+ sizeInBytes + "  " + fieldName);
+
+				MyLog.logger.info("获取到需要上传的文件名：" + fileName);
+				File dir = new File(basePath + "/pack/" + selectedCompanyName
+						+ "/Images");
+				File file = new File(basePath + "/pack/" + selectedCompanyName
+						+ "/Images/" + fileName);
+
+				if (!dir.exists()) {
+					dir.mkdir();
+				}
+				if (file.exists()) {
+					file.delete();
+					file.createNewFile();
+				}
+				fi.write(file);
+
+				MyLog.logger.info("成功上传文件：" + basePath + "/pack/"
+						+ selectedCompanyName + "/Images/" + fileName);
+				// 通过复制，同步到库里
+				File destFile = new File(companysFilePath + "/"
+						+ selectedCompanyName + "/Images/" + fileName);
+				MyLog.logger.info("copy到文件夹：" + companysFilePath + "/"
+						+ selectedCompanyName + "/Images/" + fileName);
+
+				if (destFile.exists()) {
+					destFile.delete();
+					destFile.createNewFile();
+				} else {
+					destFile.createNewFile();
+				}
+				FileOperate.copyDir(file, destFile);
+			}
+
+			// out.println("Uploaded Filename: " + fileName + "<br>");
+		}
+		return result;
+
+	}
+
+	private static ServletFileUpload initUploader(HttpServletRequest request) {
+
+		// 判断request中是否包含有multipart内容
+		System.out.println(ServletFileUpload.isMultipartContent(request));
+
+		// 如果有，生成DiskFileItemFactory工厂将进行相关的设置（不知道的情况下也可以不设置）
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		// maximum size that will be stored in memory
+		factory.setSizeThreshold(4096);// 设置缓冲区大小，这里是4kb
+		// Location to save data that is larger than maxMemSize.
+		factory.setRepository(new File(System.getProperty("user.home")));// 设置临时目录
+		// factory.setHeaderEncoding("UTF-8");// 设置字符集 防止中文文件名乱码
+
+		// 生成上传ServletFileUpload类，并将DiskFileFactory工厂传给它，并对ServletFileUpload进行配置
+		// Create a new file upload handler
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		upload.setFileSizeMax(3 * 1024 * 1024);// 设置上传文件大小3M
+		upload.setSizeMax(6 * 1024 * 1024);// 设置请求总文件大小6M
+		return upload;
+	}
+
+}

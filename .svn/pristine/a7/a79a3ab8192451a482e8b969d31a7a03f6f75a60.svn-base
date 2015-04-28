@@ -1,0 +1,144 @@
+package com.util;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+public class ServletUtil {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @category 将http的参数解析出来，并输出到日志中
+	 */
+	public static void praseParaments(HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		// 获取参数列表,并解析出来
+		Map<String, String[]> ParameterMap = request.getParameterMap();
+		if (ParameterMap != null) {
+			// 遍历Map
+			for (String key : ParameterMap.keySet()) {
+				System.out.println(key);
+				// 遍历数组
+				for (int i = 0; i < ParameterMap.get(key).length; i++) {
+
+					System.out.println(ParameterMap.get(key)[i]);
+				}
+			}
+		} else {
+			System.out.println("传过来的参数为空！");
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 * @category 接收文件，并保存
+	 */
+	public static void fileUploaderOperate(HttpServletRequest request,
+			String companysFilePath) throws Exception {
+
+		MyLog.logger.info("获取session前，。。。。。。。。。。。");
+		String selectedCompanyName = request.getSession()
+				.getAttribute("selectedCompanyName").toString();
+		MyLog.logger.info("获取session后：" + selectedCompanyName);
+
+		// 判断request中是否包含有multipart内容
+		System.out.println(ServletFileUpload.isMultipartContent(request));
+
+		// 如果有，生成DiskFileItemFactory工厂将进行相关的设置（不知道的情况下也可以不设置）
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		// maximum size that will be stored in memory
+		factory.setSizeThreshold(4096);// 设置缓冲区大小，这里是4kb
+		// Location to save data that is larger than maxMemSize.
+		factory.setRepository(new File(System.getProperty("user.home")));// 设置临时目录
+		// factory.setHeaderEncoding("UTF-8");// 设置字符集 防止中文文件名乱码
+
+		// 生成上传ServletFileUpload类，并将DiskFileFactory工厂传给它，并对ServletFileUpload进行配置
+		// Create a new file upload handler
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		upload.setFileSizeMax(3 * 1024 * 1024);// 设置上传文件大小3M
+		upload.setSizeMax(6 * 1024 * 1024);// 设置请求总文件大小6M
+
+		// 从request得到上传的文件列表,并获得其迭代器
+		// Parse the request to get file items.
+		List<FileItem> fileItems;
+
+		fileItems = upload.parseRequest(request);
+
+		// Process the uploaded file items
+		Iterator<FileItem> i = fileItems.iterator();
+
+		// 处理文件：写入或者其他操作
+		String fileName;
+		while (i.hasNext()) {
+			FileItem fi = (FileItem) i.next();
+			if (fi.isFormField()) {// 当是表单域时，进行的处理
+
+				// Get the uploaded file parameters
+				String fieldName = fi.getFieldName();// 得到元素的name属性的值
+				String fieldValue = fi.getString("utf-8");// 得到元素的value的值
+				fileName = fi.getName();// 这里是表单域，所以得到的是null
+
+			} else {// 当是文件域时，将文件保存到硬盘中
+
+				String basePath = request.getRealPath("");
+
+				MyLog.logger.info(basePath);
+				String contentType = fi.getContentType();
+				boolean isInMemory = fi.isInMemory();
+				long sizeInBytes = fi.getSize();
+				String fieldName = fi.getFieldName();// 得到元素的name属
+				MyLog.logger.info(contentType + "  " + isInMemory + "  "
+						+ sizeInBytes + "  " + fieldName);
+				fileName = fi.getName();// 取得上传的文件名
+				MyLog.logger.info("获取到需要上传的文件名：" + fileName);
+				File dir = new File(basePath + "/pack/" + selectedCompanyName
+						+ "/Images");
+				File file = new File(basePath + "/pack/" + selectedCompanyName
+						+ "/Images/" + fileName);
+
+				if (!dir.exists()) {
+					dir.mkdir();
+				}
+				if (file.exists()) {
+					file.delete();
+					file.createNewFile();
+				}
+				fi.write(file);
+
+				MyLog.logger.info("成功上传文件：" + basePath + "/pack/"
+						+ selectedCompanyName + "/Images/" + fileName);
+				// 通过复制，同步到库里
+				File destFile = new File(companysFilePath + "/"
+						+ selectedCompanyName + "/Images/" + fileName);
+				MyLog.logger.info("copy到文件夹：" + companysFilePath + "/"
+						+ selectedCompanyName + "/Images/" + fileName);
+
+				if (destFile.exists()) {
+					destFile.delete();
+					destFile.createNewFile();
+				} else {
+					destFile.createNewFile();
+				}
+				FileOperate.copyDir(file, destFile);
+			}
+
+			// out.println("Uploaded Filename: " + fileName + "<br>");
+		}
+
+	}
+}

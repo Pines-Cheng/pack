@@ -1,0 +1,89 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson.JSON;
+import com.util.MyLog;
+import com.util.PropertiesOperate;
+
+public class getCompanyName extends HttpServlet {
+
+	// 公司配置文件名
+	static String companyPropertiesPath;
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		request.setCharacterEncoding("UTF-8");
+
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("utf-8");
+		PrintWriter out = response.getWriter();
+		// out.println("hello");
+		System.out.println("hello");
+		out.println(getJsonString());
+	}
+
+	/**
+	 * @throws IOException
+	 * @category 初始化servlet
+	 */
+	public void init(ServletConfig config) {
+
+		// 获取公司名的配置文件??只可以在init里面做吗？？？
+		companyPropertiesPath = config.getServletContext().getInitParameter(
+				"companyName");
+
+		System.out.println(companyPropertiesPath);
+		// MyLog.logger.info(companyPropertiesPath);
+		// 初始化日志文件
+		String logPath = config.getServletContext().getInitParameter("logPath");
+		try {
+			MyLog.LogInit(logPath);
+			MyLog.logger.info("hello");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public String getJsonString() {
+		// 1.创建Set对象companyNames，通过属性表初始化
+		Set<String> companyNames = new HashSet<String>();
+		try {
+
+			PropertiesOperate.createProperties(companyPropertiesPath);
+			companyNames = PropertiesOperate
+					.getPropertiesKeys(companyPropertiesPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// 遍历
+		Iterator<String> it = companyNames.iterator();
+		while (it.hasNext()) {
+			String companyName = it.next();
+			System.out.println(companyName);
+		}
+		// 2.转为jsonString
+		String jsonString = JSON.toJSONString(companyNames);
+		jsonString = "callback(" + jsonString + ");";
+		MyLog.logger.info(jsonString);
+		return jsonString;
+	}
+}

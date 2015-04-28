@@ -1,0 +1,84 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.util.FileOperate;
+import com.util.MyLog;
+import com.util.PropertiesOperate;
+
+public class configSaveServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+
+		// 初始化路径
+		String selectedCompanyName = request.getSession()
+				.getAttribute("selectedCompanyName").toString();
+		MyLog.logger.info("从session里面获取的selectedCompanyName为："
+				+ selectedCompanyName);
+
+		String basePath = request.getRealPath("");
+		String localDir = new String(basePath + "/pack/" + selectedCompanyName
+				+ "/Images");
+
+		// 获取配置文件的路径
+		String configPath = new String(getCompanyName.companysFilePath + "/"
+				+ selectedCompanyName + "/config");
+		// 获取android.peroperties的路径
+		String androidPropertiesPath = new String(configPath
+				+ "/android.properties");
+		// 获取config.peroperties的路径
+		String configPropertiesPath = new String(configPath
+				+ "/config.properties");
+
+		// 将两个配置文件都清空
+		FileOperate.clearFile(androidPropertiesPath);
+		FileOperate.clearFile(configPropertiesPath);
+
+		// 获取request参数
+		try {
+			Enumeration<String> enm = request.getParameterNames();
+			while (enm.hasMoreElements()) {
+				String name = enm.nextElement();
+				if (name.equals("callback") || name.equals("_")) {
+					continue;
+				}
+				if (name.equals("defaultset") || name.equals("serverip")
+						|| name.equals("serverport")) {
+					PropertiesOperate.appendProperties(name,
+							request.getParameter(name), configPropertiesPath,
+							null);
+				} else {
+					PropertiesOperate.appendProperties(name,
+							request.getParameter(name), androidPropertiesPath,
+							null);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			out.println("error");
+		}
+		out.println("success");
+
+		// out.println("configSaveServlet");
+		out.flush();
+		out.close();
+
+	}
+
+}

@@ -1,0 +1,66 @@
+package com.util;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class Transfer {
+
+	static String jspPath = "";
+
+	/**
+	 * @category ת��forward
+	 * */
+	public static void Transfer(String address, HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+
+		// ��ʼ��jspPath
+		getJspPath(address, request);
+		MyLog.logger.info("ת�򵽣�" + jspPath);
+		if (!jspPath.equals("")) {
+			request.getRequestDispatcher(jspPath).forward(request, response);
+		} else {
+			MyLog.logger.error("jspPathת��Ϊ��");
+		}
+	}
+
+	/**
+	 * @category ת��
+	 * */
+	public static void TransferRedirect(String address,
+			HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		// ��ʼ��jspPath
+		getJspPath(address, request);
+		jspPath = "/tartools" + jspPath;
+
+		if (!jspPath.equals("") || !jspPath.equals(null)) {
+			MyLog.logger.info("��ת����" + jspPath);
+			response.sendRedirect(jspPath);
+		} else {
+			MyLog.logger.error("jspPathת��Ϊ��");
+		}
+	}
+
+	/**
+	 * @category ��ʼ��JSP
+	 * */
+	private static void getJspPath(String address, HttpServletRequest request) {
+
+		if (request.getParameter("action") != null) {
+			if (request.getParameter("action").equals("Android")) {
+				jspPath = "/AndroidJSP/" + address;
+
+			} else if (request.getParameter("action").equals("IOS")) {
+				jspPath = "/IOSJSP/" + address;
+			} else if (request.getParameter("action").equals("PC")) {
+				jspPath = "/PCJSP/" + address;
+			}
+		} else {
+			jspPath = "/AndroidJSP/" + "uploadErr.jsp";
+		}
+	}
+}

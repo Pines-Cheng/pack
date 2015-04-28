@@ -1,0 +1,120 @@
+package com.servlet;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.util.MyLog;
+
+public class svnServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		request.setCharacterEncoding("UTF-8");
+
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("utf-8");
+		PrintWriter out = response.getWriter();
+
+		String command = request.getParameter("command");
+		if (command != null) {
+			// 获取svn版本信息
+			if (command.equals("getSvnInfo")) {
+				// String[] shellString = new String[] { " svn ", " info ",
+				// " | ",
+				// " sed -n '9p' ", " | ",
+				// " awk  -F  \"[:]\" '{print $NF}' " };
+				String[] shellString = new String[] {
+						"sh",
+						request.getRealPath("/") + File.separator
+								+ "svn_info.sh" };
+
+				/*
+				 * String test = new String(); for (String i : shellString) {
+				 * test = test + i; }
+				 */
+
+				MyLog.logger.info(shellString);
+
+				try {
+					shellOperate(shellString, out, command);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			} else if (command.equals("update")) {
+				// String[] shellString = new String[] { "/usr/bin/svn ",
+				// "update ",
+				// "https://svn.sucunyun.com/repos/crab/Android/SucunCloudStor"
+				// };
+				String[] shellString = new String[] {
+						"sh",
+						request.getRealPath("/") + File.separator
+								+ "update_android_code.sh" };
+				try {
+					shellOperate(shellString, out, command);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		out.flush();
+		out.close();
+	}
+
+	private void shellOperate(String[] shellString, PrintWriter out,
+			String command) throws IOException, Exception {
+		Process process = null;
+
+		MyLog.logger.info("执行shell脚本前");
+		process = Runtime.getRuntime().exec(shellString);
+		MyLog.logger.info("执行shell脚本后");
+		// 会阻塞！！！
+		int exitValue = process.waitFor();
+		if (0 != exitValue) {
+			out.println("call shell failed. error code is :" + exitValue);
+		}
+
+		BufferedReader input = new BufferedReader(new InputStreamReader(
+				process.getInputStream()));
+		String line = "";
+
+		while ((line = input.readLine()) != null) {
+			// 追加一行
+
+			MyLog.logger.info(line);
+			if (command.equals("getSvnInfo")) {
+				String[] result = line.split(":");
+				if (result[0].equals("Last Changed Rev")) {
+					out.println(result[1]);
+				}
+			} else {
+				out.println(line);
+			}
+
+			// processList.add(line + "\r\n");
+			// out.println(line + "<br>");
+		}
+
+		input.close();
+
+	}
+
+}

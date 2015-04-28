@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+	version="3.0"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+
+	<!--comet4j的配置 -->
+	<listener>
+		<description>Comet4J容器侦听</description>
+		<listener-class>org.comet4j.core.CometAppListener</listener-class>
+	</listener>
+	<servlet>
+		<description>Comet连接[默认:org.comet4j.core.CometServlet]</description>
+		<display-name>CometServlet</display-name>
+		<servlet-name>CometServlet</servlet-name>
+		<servlet-class>org.comet4j.core.CometServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CometServlet</servlet-name>
+		<url-pattern>/conn</url-pattern>
+	</servlet-mapping>
+
+
+
+
+
+	<!--设置每个包的配置文件存放的地方 -->
+	<context-param>
+		<param-name>companyName</param-name>
+		<param-value>/usr/local/pack/company.properties</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>companysFilePath</param-name>
+		<param-value>/usr/local/pack</param-value>
+	</context-param>
+	<context-param>
+		<param-name>tomcatCompanysFilePath</param-name>
+		<param-value>/tomcat/webapps/pack/pack</param-value>
+	</context-param>
+	<context-param>
+		<param-name>packSaveDir</param-name>
+		<param-value>/var/local/pack</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>logPath</param-name>
+		<param-value>/tomcat/webapps/pack/log.html</param-value>
+	</context-param>
+	<context-param>
+		<param-name>androidProjectPath</param-name>
+		<param-value>/usr/local/Android/pro-samples/SucunCloudStor</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>androidTempPackPath</param-name>
+		<param-value>/tomcat/webapps/pack/temp</param-value>
+	</context-param>
+
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>getCompanyName</servlet-name>
+		<servlet-class>com.servlet.getCompanyName</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>getCompanyInfo</servlet-name>
+		<servlet-class>com.servlet.getCompanyInfo</servlet-class>
+	</servlet>
+
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>uploaderServlet</servlet-name>
+		<servlet-class>com.servlet.uploaderServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>deleteImagesServlet</servlet-name>
+		<servlet-class>com.servlet.deleteImagesServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>configSaveServlet</servlet-name>
+		<servlet-class>com.servlet.configSaveServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>androidPackServlet</servlet-name>
+		<servlet-class>com.pack.servlet.androidPackServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>downloadServlet</servlet-name>
+		<servlet-class>com.servlet.downloadServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>companyNameOperateServlet</servlet-name>
+		<servlet-class>com.servlet.companyNameOperateServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>historyServlet</servlet-name>
+		<servlet-class>com.servlet.historyServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>svnServlet</servlet-name>
+		<servlet-class>com.servlet.svnServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>IOSPackServlet</servlet-name>
+		<servlet-class>com.pack.servlet.IOSPackServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>OSSOperateServlet</servlet-name>
+		<servlet-class>com.servlet.OSSOperateServlet</servlet-class>
+	</servlet>
+
+
+
+
+
+
+
+
+
+	<servlet-mapping>
+		<servlet-name>uploaderServlet</servlet-name>
+		<url-pattern>/uploaderServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>androidPackServlet</servlet-name>
+		<url-pattern>/androidPackServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>getCompanyName</servlet-name>
+		<url-pattern>/getCompanyName</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>getCompanyInfo</servlet-name>
+		<url-pattern>/getCompanyInfo</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>deleteImagesServlet</servlet-name>
+		<url-pattern>/deleteImagesServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>configSaveServlet</servlet-name>
+		<url-pattern>/configSaveServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>downloadServlet</servlet-name>
+		<url-pattern>/downloadServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>companyNameOperateServlet</servlet-name>
+		<url-pattern>/companyNameOperateServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>historyServlet</servlet-name>
+		<url-pattern>/historyServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>svnServlet</servlet-name>
+		<url-pattern>/svnServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>IOSPackServlet</servlet-name>
+		<url-pattern>/IOSPackServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>OSSOperateServlet</servlet-name>
+		<url-pattern>/OSSOperateServlet</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>home.html</welcome-file>
+	</welcome-file-list>
+
+</web-app>

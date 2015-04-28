@@ -1,0 +1,73 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.util.FileOperate;
+import com.util.MyLog;
+
+public class deleteImagesServlet extends HttpServlet {
+
+	// 公司配置文件名
+	static String companyPropertiesPath;
+	static String companysFilePath;
+	static String tomcatCompanysFilePath;
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+
+		// 初始化路径
+		String selectedCompanyName = request.getSession()
+				.getAttribute("selectedCompanyName").toString();
+		MyLog.logger.info("从session里面获取的selectedCompanyName为："
+				+ selectedCompanyName);
+
+		String basePath = request.getRealPath("");
+		String localDir = new String(basePath + "/pack/" + selectedCompanyName
+				+ "/Images");
+		String savaDir = new String(companysFilePath + "/"
+				+ selectedCompanyName + "/Images");
+		FileOperate.deleteFiles(localDir);
+		FileOperate.deleteFiles(savaDir);
+
+		out.flush();
+		out.close();
+
+	}
+
+	/**
+	 * Initialization of the servlet. <br>
+	 * 
+	 * @throws ServletException
+	 *             if an error occurs
+	 */
+	public void init(ServletConfig config) throws ServletException {
+		// 获取公司名的配置文件??只可以在init里面做吗？？？
+		companyPropertiesPath = config.getServletContext().getInitParameter(
+				"companyName");
+		System.out.println(companyPropertiesPath);
+		MyLog.logger.info(companyPropertiesPath);
+		// 获取公司文件信息的文件夹路径
+		companysFilePath = config.getServletContext().getInitParameter(
+				"companysFilePath");
+		MyLog.logger.info(companysFilePath);
+		// 获取tomcat下pack文件夹路径
+		tomcatCompanysFilePath = config.getServletContext().getInitParameter(
+				"tomcatCompanysFilePath");
+	}
+
+}

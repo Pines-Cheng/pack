@@ -1,0 +1,189 @@
+/*
+	@本文件是一个封装的函数库。
+*/
+
+var host = "http://192.168.1.171:8080";
+
+//页面初始化函数
+function init_page() {
+	//window.alert("in");
+	// window.alert($(window).height()); 631
+	// window.alert($(document).height()); 665
+
+	var height = $(window).height();
+	var width = $(window).width();
+
+	//window.alert(width-400); 
+
+	//左面板
+	$(".layout-left").height(height);
+	//中间的面板
+	$(".layout_mid").height(height);
+	//主面板
+	$(".layout_main").height(height).width(width - 420);
+	//公司名的浮动面板
+	$("#company_panel").height(height - 400);
+	//取消整个页面的滚动条
+	$("body").css('overflow', 'hidden');
+	//将添加公司的块隐藏起来
+	$("#edit_company").css('display', 'none');
+
+	//绑定缩放的事件，无论页面怎么缩放，都不会影响整体的效果！！
+	$(window).resize(function(event) {
+		/* Act on the event */
+		init_page();
+	});
+
+	//公司名未选中，收起并显示公司名未选择
+	check_company_select();
+
+	//公司的设置显示及隐藏
+	$("#company_name_select").on('click',
+		function(event) {
+			$("#company_operate").slideToggle(100);
+			//alert(event);
+		}
+	);
+
+	//点击添加按钮，当前公司添加块出现的事件
+	$("#add_button").click(function(event) {
+		/* Act on the event */
+		$("#edit_company").slideDown(100);
+	});
+
+	//单击勾或者叉按钮，添加块隐藏
+	$("#confirm_button").click(function(event) {
+		/* Act on the event */
+		$("#edit_company").slideUp(100);
+	});
+	$("#cancel_button").click(function(event) {
+		/* Act on the event */
+		$("#edit_company").slideUp(100);
+	});
+
+	//初始化时自动从服务器加载公司名列表
+	getCompanyList();
+}
+
+
+//默认选中一家公司
+// $("#海尔").attr("checked","true");
+// $("#中石油").attr("checked","true");
+
+//检查公司是否选中，并显示出来
+function check_company_select() {
+
+	var company_list = document.getElementsByName("company_name");
+	var result = false;
+	for (var i = 0; i < company_list.length; i++) {
+
+		//如果被选中
+		if (company_list[i].checked) {
+			//改变按钮颜色
+			$(company_list[i]).next().children().css('background-color', '#801414');
+
+			result = true;
+			var element = $(company_list[i]).next("div");
+			// var test = document.getElementById("company_name_select");
+			// alert(test);
+			var test = $("#company_name_select").html();
+			//alert(test);
+			//设置值，并放下
+			$("#company_name_select").html(company_list[i].value);
+			//显示设置
+			$("#company_operate").slideDown(100);
+
+			//发送ajax请求图片，并在页面上显示。
+			var url =encodeURI( host + "/pack/getCompanyInfo?selectedCompany=" + company_list[i].value);
+			//var data = {"selectedCompany":company_list[i].value}
+			getCompanyImages(url);
+
+		} else {
+			//恢复按钮颜色
+			$(company_list[i]).next().children().css('background-color', '#337AB7');
+		}
+	}
+	if (result == false) {
+		$("#company_name_select").html("未选择！");
+		$("#company_operate").slideUp(100);
+
+	}
+}
+
+//Ajax请求,刷新公司名的列表
+function getCompanyList() {
+	var url = host + "/pack/getCompanyName";
+
+	$.ajax({
+		type: "get",
+		async: false,
+		url: url,
+		dataType: "jsonp",
+		jsonp: "callback", //传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+		jsonpCallback: "callback", //自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，也可以写"?"，jQuery会自动为你处理数据
+		success: function(result) {
+
+			for (var i in result) {
+				//alert(i+":"+result.keys[i]);//循环输出a:1,b:2,etc.  
+				var companyName = result[i];
+				$("#company_button").append(' <input type="radio" name="company_name" value="' + companyName + '" id="' + companyName + '"></input><label class="" style="display:block float:left" for="' + companyName + '"><div>' + companyName + '</div></label> ');
+			}
+			//重新绑定点击事件
+			$("#company_button>input").click(function(event) {
+
+				//修改当前公司，并显示公司名
+				check_company_select();
+
+			});
+		},
+		error: function() {
+			alert('服务器连接失败，请联系管理员！');
+		}
+	});
+
+}
+
+//选中公司后，发送选中的公司名，Ajax请求公司文件夹图片路径
+function getCompanyImages(url) {
+	$.ajax({
+		type: "get",
+		async: false,
+		url: url,
+		dataType: "jsonp",
+		jsonp: "callback", //传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+		jsonpCallback: "callback", //自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，也可以写"?"，jQuery会自动为你处理数据
+
+		//成功之后，返回图片的名称及绝对路径
+		success: function(result) {
+			$("#android_logo").empty();
+			$("#android_config_file").empty();
+			//alert(result.companyImagesInfo);
+			if ($.isEmptyObject(result.companyImagesInfo)) {
+				$("#android_logo").append('<h4 >您还没有上传logo！</h4>');
+			} else {
+				for (var i in result.companyImagesInfo) {
+					//alert(i + ":" + result.companyImagesInfo[i]);				
+					$("#android_logo").append('<div id="images"> <div ><a class="fancybox" rel="gallery1" href="' + result.companyImagesInfo[i] + '" title= "' + i + '"> <img src= "' + result.companyImagesInfo[i] + '" alt="" /> </a></div> <div>' + i + '</div></div>');
+					//            var companyName = result.keys[i];
+					//             $("#company_button").append();
+				}
+			}
+			if ($.isEmptyObject(result.companyConfigInfo)) {
+				$("#android_config_file").append('<h4 >您还没有添加配置文件！</h4>');
+			} else {
+				for (var i in result.companyConfigInfo) {
+					//alert(i + ":" + result.companyImagesInfo[i]);				
+					$("#android_config_file").append(i + ':' + result.companyConfigInfo[i] + '       |      ');
+					//            var companyName = result.keys[i];
+					//             $("#company_button").append();
+				}
+			}
+
+		},
+		error: function() {
+			alert('服务器连接失败，请联系管理员！');
+
+		}
+	});
+
+};

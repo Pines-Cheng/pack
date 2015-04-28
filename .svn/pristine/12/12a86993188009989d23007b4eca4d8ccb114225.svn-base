@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+	version="3.0"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+	<!--设置每个包的配置文件存放的地方 -->
+	<context-param>
+		<param-name>companyName</param-name>
+		<param-value>/tomcat/webapps/pack/company.properties</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>companysFilePath</param-name>
+		<param-value>/usr/local/pack</param-value>
+	</context-param>
+	<context-param>
+		<param-name>tomcatCompanysFilePath</param-name>
+		<param-value>/tomcat/webapps/pack/pack</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>logPath</param-name>
+		<param-value>/tomcat/webapps/pack/log.html</param-value>
+	</context-param>
+	<context-param>
+		<param-name>androidProjectPath</param-name>
+		<param-value>/android/SucunCloudStor</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>androidTempPackPath</param-name>
+		<param-value>/tomcat/webapps/pack/temp</param-value>
+	</context-param>
+
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>getCompanyName</servlet-name>
+		<servlet-class>com.servlet.getCompanyName</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>getCompanyInfo</servlet-name>
+		<servlet-class>com.servlet.getCompanyInfo</servlet-class>
+	</servlet>
+
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>uploaderServlet</servlet-name>
+		<servlet-class>com.servlet.uploaderServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>deleteImagesServlet</servlet-name>
+		<servlet-class>com.servlet.deleteImagesServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>configSaveServlet</servlet-name>
+		<servlet-class>com.servlet.configSaveServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>This is the description of my J2EE component</description>
+		<display-name>This is the display name of my J2EE component</display-name>
+		<servlet-name>packServlet</servlet-name>
+		<servlet-class>com.servlet.packServlet</servlet-class>
+	</servlet>
+
+
+
+
+	<servlet-mapping>
+		<servlet-name>uploaderServlet</servlet-name>
+		<url-pattern>/uploaderServlet</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>getCompanyName</servlet-name>
+		<url-pattern>/getCompanyName</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>getCompanyInfo</servlet-name>
+		<url-pattern>/getCompanyInfo</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>deleteImagesServlet</servlet-name>
+		<url-pattern>/deleteImagesServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>configSaveServlet</servlet-name>
+		<url-pattern>/configSaveServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>packServlet</servlet-name>
+		<url-pattern>/packServlet</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>home.html</welcome-file>
+	</welcome-file-list>
+
+</web-app>

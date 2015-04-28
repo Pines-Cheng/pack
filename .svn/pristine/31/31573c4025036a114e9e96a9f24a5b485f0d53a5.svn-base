@@ -1,0 +1,139 @@
+//安卓打包按钮绑定等待和打包的事件
+$("#androidPackStart").click(function(event) {
+	//alert("开始打包！");
+	//每次打包前，都将打包结果初始化为ERROR
+	$("body", parent.document).attr('packResult', "ERROR");
+	console.log("点击打包，初始化为ERROR！");
+	spinDisplay();
+	androidPack();
+
+});
+
+//安卓客户端打包
+function androidPack() {
+	//遍历
+	// var values = $(":input").serializeArray();
+	$("body", parent.document).attr('packResult', "ERROR");
+	$.ajax({
+			type: "get",
+			//async:false,
+			// data: values,
+			url: "/pack/packServlet?command=pack",
+			dataType: "jsonp",
+			jsonp: "callback", //传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+			jsonpCallback: "callback", //自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，也可以写"?"，jQuery会自动为你处理数据
+			success: function(result) {
+				if (result.result == "ERROR") {
+					spinHidden();
+					alert("配置文件不存在或有错误！请完善配置文件！");
+					//设置打包结果
+					$("body", parent.document).attr('packResult', "ERROR");
+				} else {
+					//将json数据保存到data中
+					$("body", parent.document).attr('androidProjectDestPath', result.androidProjectDestPath);
+					//alert("保存配置文件成功");
+
+					//绑定框架的路径
+					$("#pack_iframe").attr("src", result.shellOperateLogURL);
+
+					//绑定shell脚本执行的路径
+					$("#androidPackShellOperateLog").attr('href', result.shellOperateLogURL);
+
+					//获取下载的URL，绑定下载按钮
+					$("#pack_download").click(function(event) {
+						//alert("下载！");
+						window.open("/pack/downloadServlet?filePath=" + result.downloadFileURL);
+					});
+
+					//显示和日志查看页面
+					$("#androidPackShellOperateLog").css('display', "");
+
+
+					//下载执行日志
+					getShellOperateLog(result.shellOperateLogURL);
+
+					//重新下载执行日志
+					reloadLog(result.shellOperateLogURL);
+
+				}
+
+
+
+			},
+			error: function() {
+				//alert("保存配置文件失败");
+
+			}
+		})
+		.done(function() {
+			console.log("androidPack() success");
+
+		})
+		.fail(function() {
+			console.log("error");
+			alert("打包失败");
+			//设置打包结果
+			$("body", parent.document).attr('packResult', "ERROR");
+		})
+		.always(function() {
+			console.log("androidPack() complete");
+
+		});
+
+}
+
+
+
+//再次获取日志文件，并显示
+function reloadLog(result) {
+	$.ajax({
+			//async:false,
+			url: result,
+		})
+		.done(function() {
+			console.log("reloadLog(result) success");
+			$("#pack_iframe")[0].contentWindow.location.reload();
+
+		})
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("reloadLog(result) complete");
+		});
+}
+
+//获取日志文件，并显示
+function getShellOperateLog(result) {
+	$.ajax({
+			//async:false,
+			url: result,
+		})
+		.done(function() {
+			console.log("getShellOperateLog(result) success");
+
+			//$("#pack_iframe")[0].contentWindow.location.reload();
+			//alert("打包完成！");
+			spinHidden();
+			$("#pack_iframe")[0].contentWindow.location.reload();
+			spinHidden();
+
+
+
+			//设置打包结果
+			$("body", parent.document).attr('packResult', "SUCCESS");
+
+			//显示下载按钮
+			$("#pack_download").css('display', "");
+			alert("打包完成！");
+
+			console.log("打包成功，结果设置为SUCCESS！");
+
+		})
+		.fail(function() {
+			console.log("getShellOperateLog(result) error");
+		})
+		.always(function() {
+			console.log("getShellOperateLog(result) complete");
+		});
+}

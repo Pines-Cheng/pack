@@ -1,0 +1,380 @@
+/**
+ * 
+ */
+package com.servlet;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Queue;
+import java.util.Set;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.dom4j.DocumentException;
+
+import com.aliyun.OSSClientConfig;
+import com.aliyun.OSSClientOperate;
+import com.aliyun.UploadFileInfo;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
+import com.pack.define.OSSServerDefine;
+import com.pack.thread.UploadFilesToOSSThread;
+import com.util.DateOperate;
+import com.util.FileOperate;
+import com.util.MyJSON;
+import com.util.MyLog;
+import com.util.XML;
+
+/**
+ * @author spider
+ * 
+ */
+public class OSSOperateServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+		request.setCharacterEncoding("UTF-8");
+
+		response.setContentType("text/html;charset=utf-8");
+
+		String selectedCompanyName = request.getSession()
+				.getAttribute("selectedCompanyName").toString();
+
+		PrintWriter out = response.getWriter();
+		MyJSON js = new MyJSON();
+
+		String command = request.getParameter("command");
+
+		// 初始化ossclient
+		OSSClientOperate oss = null;
+		try {
+			oss = new OSSClientOperate(OSSClientConfig.ACCESS_KEY_ID,
+					OSSClientConfig.ACCESS_KEY_SECRET,
+					OSSClientConfig.END_POINT);
+		} catch (Exception e) {
+			js.putAndReturn("ERROR", "阿里云连接错误，请重试！", out, js);
+			return;
+		}
+
+		// 初始化上传的线程
+		inituploadThread(request, oss);
+
+		if (command == null || command.isEmpty()) {
+
+			js.putAndReturn("ERROR", "command为空！", out, js);
+			return;
+
+		} else {
+
+			// 1.上传到Test
+			if (command.equals("uploadToTest")) {
+
+				// 执行！
+				if (!uploadToTest(request, out, js, oss, selectedCompanyName)) {
+					return;
+				}
+
+			}
+			// 2.删除Test
+			if (command.equals("deleteTest")) {
+
+				deleteTest(request, out, js, oss);
+				return;
+			}
+			// 3.删除xserver
+			if (command.equals("deleteXserver")) {
+
+				if (!deleteXserver(request, out, js)) {
+					return;
+				}
+			}
+			// 4.从test上传到xserver
+			if (command.equals("uploadToXserver")) {
+
+				if (!uploadToXserver(request, out, js, oss)) {
+					return;
+				}
+			}
+			// 5.获取阿里云上test与xserve下的公司等信息
+			if (command.equals("getInfo")) {
+
+				// 如果为false
+				if (!getInfo(out, js, oss)) {
+					return;
+				}
+			}
+		}
+
+		out.print(js.getJsonString());
+
+		out.flush();
+		out.close();
+		return;
+	}
+
+	/**
+	 * @param request
+	 * @param oss
+	 * @return
+	 */
+	private void inituploadThread(HttpServletRequest request,
+			OSSClientOperate oss) {
+
+		if (request.getSession().getAttribute("uploadThread") == null) {
+
+			UploadFilesToOSSThread uploadTarget = new UploadFilesToOSSThread(
+					request, oss);
+
+			Thread thread = new Thread(uploadTarget);
+			// 设为守护进程，这样主进程退出时，守护进程自动退出了
+			thread.setDaemon(true);
+			request.getSession().setAttribute("uploadThread", thread);
+
+			// 启动线程
+			thread.start();
+		} else {
+			Thread thread = (Thread) request.getSession().getAttribute(
+					"uploadThread");
+
+			// 如果线程不是活动状态
+			if (!thread.isAlive()) {
+				MyLog.logger.error("线程is not active!");
+				thread.start();
+				MyLog.logger.warn("重新启动线程！");
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * 从test里面copy到xserver
+	 * 
+	 * @param request
+	 * @param out
+	 * @param js
+	 * @param oss
+	 */
+	private boolean uploadToXserver(HttpServletRequest request,
+			PrintWriter out, MyJSON js, OSSClientOperate oss) {
+		String companyPinyin = request.getParameter("companyPinyin");
+		if (companyPinyin == null || companyPinyin.equals("undefined")
+				|| companyPinyin.isEmpty()) {
+			js.putAndReturn("ERROR", "companyPinyin 值有误！", out, js);
+			return false;
+		}
+
+		String srcBucketName = OSSServerDefine.OPERATE_BUCKET_NAME;
+		String destBucketName = OSSServerDefine.OPERATE_BUCKET_NAME;
+		String srcPrefix = OSSServerDefine.OSS_TEST_DIR_NAME + companyPinyin
+				+ "/";
+		String destPrefix = OSSServerDefine.OSS_XSERVER_DIR_NAME
+				+ companyPinyin + "/";
+
+		// 1. 确定xserver上不存在
+		if (oss.isObjectExsit(OSSServerDefine.OPERATE_BUCKET_NAME, destPrefix)) {
+			js.putAndReturn("ERROR", srcPrefix + "在xserver上已存在，请先删除！", out, js);
+			// 出错后一定要返回！
+			return false;
+		}
+
+		// 2.copy过去
+		oss.copyDir(srcBucketName, srcPrefix, destBucketName, destPrefix);
+
+		// 3. copy成功后删除原来的文件
+		oss.deleteDir(srcBucketName, srcPrefix);
+
+		js.JSONObject.put("status", "SUCCESS");
+		js.JSONObject.put("message", "");
+		return true;
+	}
+
+	/**
+	 * @param request
+	 * @param out
+	 * @param js
+	 */
+	private boolean deleteXserver(HttpServletRequest request, PrintWriter out,
+			MyJSON js) {
+		String companyPinyin = request.getParameter("companyPinyin");
+		if (companyPinyin == null || companyPinyin.equals("undefined")
+				|| companyPinyin.isEmpty()) {
+			js.putAndReturn("ERROR", "companyPinyin 值有误！", out, js);
+			return false;
+		}
+
+		js.JSONObject.put("status", "ERROR");
+		js.JSONObject.put("message", "该权限还未开放！");
+		return true;
+	}
+
+	/**
+	 * @param request
+	 * @param out
+	 * @param js
+	 * @param oss
+	 */
+	private boolean deleteTest(HttpServletRequest request, PrintWriter out,
+			MyJSON js, OSSClientOperate oss) {
+		String companyPinyin = request.getParameter("companyPinyin");
+		if (companyPinyin == null || companyPinyin.equals("undefined")
+				|| companyPinyin.isEmpty()) {
+			js.putAndReturn("ERROR", "companyPinyin 值有误！", out, js);
+			return false;
+		}
+
+		String ossDeleteKey = OSSServerDefine.OSS_TEST_DIR_NAME + companyPinyin
+				+ "/";
+		oss.deleteDir(OSSServerDefine.OPERATE_BUCKET_NAME, ossDeleteKey);
+
+		js.putAndReturn("SUUCESS", "", out, js);
+		return true;
+	}
+
+	/**
+	 * @category 上传到test下面
+	 * @param request
+	 * @param out
+	 * @param js
+	 * @param oss
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	private boolean uploadToTest(HttpServletRequest request, PrintWriter out,
+			MyJSON js, OSSClientOperate oss, String selectedCompanyName)
+			throws IOException, FileNotFoundException {
+		String tempDirName = DateOperate.getCurrentTime();
+		// 上传临时目录
+		String tempDirPath = OSSServerDefine.OSS_OPERATE_TEMP_FILE
+				+ File.separator + tempDirName;
+
+		FileOperate.ifDirNotExistThenCreate(tempDirPath);
+
+		// 1.获取包名的路径，copy到临时文件
+		String srcPackPath = request.getParameter("filePath");
+
+		if (srcPackPath == null || srcPackPath.isEmpty()
+				|| srcPackPath.equals("undefined")
+				|| (!(new File(srcPackPath).exists()))) {
+
+			js.putAndReturn("ERROR", "filePath值为空或者无效！", out, js);
+			return false;
+		}
+
+		String destPackPath = tempDirPath + File.separator
+				+ OSSServerDefine.OSS_IPA_Name;
+		// netdisk.plist文件
+		String srcPlistPath = request.getRealPath("/") + File.separator
+				+ OSSServerDefine.OSS_PLIST_TEMPLATE_PATH;
+		String destPlistPath = tempDirPath + File.separator
+				+ OSSServerDefine.OSS_PLIST_NAME;
+		// copy
+		FileOperate.copyFile(srcPackPath, destPackPath);
+		FileOperate.copyFile(srcPlistPath, destPlistPath);
+
+		// 2.改netdisk.list的文件内容(公司名，公司拼音 )
+		String companyPinyinString = PinyinHelper.convertToPinyinString(
+				selectedCompanyName, "", PinyinFormat.WITHOUT_TONE);
+		String OSSIpaUrl = OSSServerDefine.OSS_ZKYH_TEST_IPA_URL.replace(
+				"#{companyPinyin}", companyPinyinString);
+
+		// /plist/dict/array/dict/array/dict/string[2]
+		// /plist/dict/array/dict/dict/string[4]
+		try {
+			// 替换内容
+			XML.replaceXpathText(destPlistPath, OSSServerDefine.XPATH_URL,
+					OSSIpaUrl);
+			XML.replaceXpathText(destPlistPath,
+					OSSServerDefine.XPATH_COMPANY_NAME, selectedCompanyName);
+		} catch (DocumentException e) {
+
+			js.putAndReturn("ERROR", "替换netdisk.plist内容出错！", out, js);
+			return false;
+
+		}
+
+		// 3. 上传到测试
+
+		// 如果文件存在，则返回错误
+		if (oss.isObjectExsit(OSSServerDefine.OPERATE_BUCKET_NAME, "test/"
+				+ companyPinyinString + "/" + OSSServerDefine.OSS_IPA_Name)
+				|| oss.isObjectExsit(OSSServerDefine.OPERATE_BUCKET_NAME,
+						"test/" + companyPinyinString + "/"
+								+ OSSServerDefine.OSS_PLIST_NAME)) {
+
+			js.putAndReturn("ERROR", "该公司的安装包在test中已存在，请先删除或上传到xserver！", out,
+					js);
+			return false;
+
+		}
+
+		// 上传,添加到队列
+		Queue<UploadFileInfo> uploadQueue = (Queue<UploadFileInfo>) request
+				.getSession().getAttribute("uploadQueue");
+
+		uploadQueue.offer(new UploadFileInfo(
+				OSSServerDefine.OPERATE_BUCKET_NAME, "test/"
+						+ companyPinyinString + "/"
+						+ OSSServerDefine.OSS_IPA_Name, destPackPath));
+		uploadQueue.offer(new UploadFileInfo(
+				OSSServerDefine.OPERATE_BUCKET_NAME, "test/"
+						+ companyPinyinString + "/"
+						+ OSSServerDefine.OSS_PLIST_NAME, destPlistPath));
+
+		// 更新session
+		request.getSession().setAttribute("uploadQueue", uploadQueue);
+
+		MyLog.logger.warn("将文件压入队列" + destPackPath);
+		MyLog.logger.warn("将文件压入队列" + destPlistPath);
+
+		// 4.删除临时文件
+		// FileOperate.deleteFiles(tempDirPath);
+
+		js.JSONObject.put("status", "SUCCESS");
+		js.JSONObject.put("message", "");
+		return true;
+	}
+
+	/**
+	 * @param js
+	 * @param oss
+	 */
+	private boolean getInfo(PrintWriter out, MyJSON js, OSSClientOperate oss) {
+
+		// 获取sctest下的xserver下的所有目录名的Set
+		try {
+
+			Set<String> xserverCompanys = oss.getSubDir(
+					OSSServerDefine.OPERATE_BUCKET_NAME, "/", "xserver/");
+			Set<String> testCompanys = oss.getSubDir(
+					OSSServerDefine.OPERATE_BUCKET_NAME, "/", "test/");
+
+			js.JSONObject.put("xserverCompanys", xserverCompanys);
+			js.JSONObject.put("testCompanys", testCompanys);
+			js.JSONObject.put("status", "SUCCESS");
+			js.JSONObject.put("message", "");
+
+			return true;
+
+		} catch (Exception e) {
+			js.JSONObject.put("status", "ERROR");
+			js.JSONObject.put("message", "阿里云获取信息错误！");
+			js.putAndReturn("ERROR", "阿里云获取信息错误！", out, js);
+			return false;
+		}
+	}
+}

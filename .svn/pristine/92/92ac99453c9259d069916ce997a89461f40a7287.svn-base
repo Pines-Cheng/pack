@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="cn.sucun.android"
+    android:installLocation="auto"
+    android:versionCode="2034"
+    android:versionName="2.0.3.4"
+    tools:ignore="OldTargetApi" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="18" />
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="cn.sucun.android" >
+    </instrumentation>
+
+    <application
+        android:name="cn.sucun.android.BasicApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/app_logo"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.SuCloudStor" >
+        <uses-library android:name="android.test.runner" />
+        <activity
+            android:name="cn.sucun.android.logo.LogoActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.sucun.android.login.LoginActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.login.SetIpActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.home.HomeActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.filebrowser.activity.FileBrowserActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.remote.FileBrowserDialogActivity"
+            android:screenOrientation="portrait" >
+            <intent-filter android:label="@string/send_title" >
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter android:label="@string/send_title" >
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.sucun.android.local.LocalFileBrowserActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.search.FileSearchActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible" >
+        </activity>
+        <activity android:name="cn.sucun.note.camera.CameraNoteActivity" >
+        </activity>
+        <activity android:name="cn.sucun.note.camera.CameraActivity" >
+        </activity>
+        <activity
+            android:name="cn.sucun.note.text.TextNoteActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <action android:name="com.android.notepad.action.EDIT_NOTE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="vnd.android.cursor.item/cn.sucun.android.lilac.note" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.sucun.note.NoteListActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.note.voice.SoundRecorder"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.document.ViewDocumentActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.document.ViewLocalFileActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity android:name="cn.sucun.android.owner.OwnerCloudActivity" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.setting.SettingActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.about.AboutActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.offline.OffLineFileActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.upgrade.UpGradeInfoActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.upgrade.UpdateActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.upgrade.UpGradeInfoDetilActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.share.ShareManagerActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.share.ShareSetActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cn.sucun.android.transport.TransportActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.artifex.mupdfdemo.MuPDFActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppBaseTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/vnd.ms-xpsdocument" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/x-cbz" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.xps" />
+                <data android:host="*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.pdf" />
+                <data android:host="*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.cbz" />
+                <data android:host="*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.artifex.mupdfdemo.OutlineActivity"
+            android:label="@string/outline_title"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+        </activity>
+        <activity
+            android:name="com.artifex.mupdfdemo.PrintDialogActivity"
+            android:label="@string/print"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+        </activity>
+
+        <receiver
+            android:name="cn.sucun.android.NetChangeReceiver"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name="cn.sucun.android.SucunProvider"
+            android:authorities="cn.sucun.android.lilac"
+            android:process=":remote" />
+
+        <service
+            android:name="cn.sucun.android.SucunService"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="cn.sucun.android.SU_MAIN_SERVICE" />
+                <action android:name="cn.sucun.android.SU_SERV_ACCOUNT" />
+                <action android:name="cn.sucun.android.SU_SERV_ACTION" />
+                <action android:name="cn.sucun.android.SU_SERV_THUMB" />
+                <action android:name="cn.sucun.android.SU_SERV_TRANS" />
+                <action android:name="cn.sucun.android.SU_SERV_SHARE" />
+                <action android:name="cn.sucun.android.SU_SERV_VIEW" />
+                <action android:name="cn.sucun.android.SU_SERV_SEARCH" />
+                
+                <action android:name="cn.sucun.android.SU_REFRESH" />
+                <action android:name="cn.sucun.android.SU_GROUP_REFRESH"/>
+            </intent-filter>
+        </service>
+        <service android:name="cn.sucun.android.upgrade.UpdateService" />
+    </application>
+
+</manifest>
